@@ -1,0 +1,87 @@
+/* ============================================================
+   theme.css: shared UI primitives (flat charcoal theme)
+   Colors/tokens live at the top of App.css, so import order
+   does not matter. These styles are used by components/ui/*.
+   Module accent: set style={{ '--accent': 'var(--code)' }} on a
+   wrapper (Code = cyan, Board = orange, Chat = lime).
+   ============================================================ */
+
+.card {
+  padding: 16px;
+  color: var(--text);
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+}
+
+.btn {
+  padding: 8px 14px;
+  border: 0;
+  border-radius: var(--radius-sm);
+  color: var(--on-accent);
+  background: var(--accent, var(--board));
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: filter .12s, transform .12s;
+}
+.btn:hover { filter: brightness(1.1); }
+.btn:active { transform: translateY(1px); }
+.btn:focus-visible { outline: 2px solid var(--code); outline-offset: 2px; }
+
+.badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 5px;
+  color: var(--text);
+  background: var(--card-2);
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.input {
+  width: 100%;
+  padding: 9px 11px;
+  color: var(--text);
+  background: var(--page);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  font: inherit;
+  font-size: 13px;
+  outline: none;
+  transition: border-color .12s;
+}
+.input:focus { border-color: var(--accent, var(--code)); }
+.input::placeholder { color: var(--muted); }
+
+/* ---------- modal ---------- */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: grid;
+  place-items: center;
+  background: rgba(0, 0, 0, .6);
+}
+.modal {
+  width: min(520px, 92vw);
+  padding: 22px;
+  color: var(--text);
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, .4);
+}
+.modal-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+.modal-head h3 { margin: 0; font-size: 16px; }
+.modal-close {
+  width: 28px;
+  height: 28px;
+  color: var(--text);
+  background: var(--card-2);
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  cursor: pointer;
+}
+.modal-close:hover { background: var(--line); }

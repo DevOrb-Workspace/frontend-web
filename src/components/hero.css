@@ -1,0 +1,108 @@
+.hero {
+  position: relative;
+  padding: 26px 30px 24px;
+  margin-top: 22px;
+  overflow: hidden;
+  color: var(--text);
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  animation: heroIn .5s ease both;
+}
+
+/* top par ek patli accent line, load hone par ek baar sweep hoti hai */
+.hero::before {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: linear-gradient(90deg, var(--board) 0 33%, var(--code) 33% 66%, var(--chat) 66% 100%);
+  transform-origin: left;
+  animation: heroLine .9s cubic-bezier(.2, .8, .2, 1) both;
+  content: '';
+}
+
+.hero-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 14px;
+  color: var(--muted);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  animation: heroIn .5s .05s ease both;
+}
+.hero-pulse {
+  position: relative;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--chat);
+}
+.hero-pulse::after {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: var(--chat);
+  animation: heroPulse 2s ease-out infinite;
+  content: '';
+}
+
+.hero-title {
+  margin: 0 0 8px;
+  font-size: clamp(26px, 3vw, 38px);
+  font-weight: 700;
+  letter-spacing: -1px;
+  line-height: 1.2;
+  animation: heroIn .55s .1s ease both;
+}
+
+.hero-word-wrap {
+  position: relative;
+  display: inline-block;
+  min-width: 3.2ch;
+}
+.hero-word {
+  display: inline-block;
+  animation: wordIn .45s cubic-bezier(.2, .8, .2, 1) both;
+}
+.hero-underline {
+  position: absolute;
+  left: 0;
+  bottom: -3px;
+  width: 100%;
+  height: 3px;
+  border-radius: 2px;
+  transform-origin: left;
+  animation: heroLine .6s .1s cubic-bezier(.2, .8, .2, 1) both;
+}
+
+.hero-sub {
+  max-width: 520px;
+  margin: 0 0 18px;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.6;
+  animation: heroIn .55s .18s ease both;
+}
+
+.hero-modules { display: flex; flex-wrap: wrap; gap: 10px; }
+.hero-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 12px;
+  background: var(--card-2);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  font-size: 12px;
+  animation: heroIn .5s ease both;
+  transition: border-color .15s, transform .15s;
+}
+.hero-chip:hover { border-color: var(--c); transform: translateY(-2px); }
+.hero-chip strong { font-weight: 600; }
+.hero-chip span:last-child { color: var(--muted); }
+.hero-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--c); }
+
+@keyframes heroIn    { from { opacity: 0; transform: translateY(10px); }
