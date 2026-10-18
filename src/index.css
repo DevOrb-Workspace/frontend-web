@@ -1,119 +1,73 @@
 
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+
+/* Basic settings */
 :root {
-  --text: #39433C;
-  --text-h: #1C261F;
-  --bg: #F3F5F1;
-  --border: #DDE4DC;
-  --code-bg: #E9EEE8;
-  --accent: #648B6B;
-  --accent-bg: rgba(100, 139, 107, 0.12);
-  --accent-border: rgba(100, 139, 107, 0.5);
-  --social-bg: rgba(220, 232, 220, 0.5);
-  --shadow: rgba(30, 45, 32, 0.1) 0 10px 15px -3px,
-    rgba(30, 45, 32, 0.05) 0 4px 6px -2px;
-
-  --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --mono: ui-monospace, Consolas, monospace;
-
-  font: 18px/145% var(--sans);
-  letter-spacing: 0.18px;
-  color-scheme: light;
-  color: var(--text);
-  background: var(--bg);
+  font-family: 'DM Sans', sans-serif;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  scroll-behavior: smooth;
 }
 
-@media (max-width: 1024px) {
-  :root {
-    font-size: 16px;
-  }
-}
-
+/* Reset default browser spacing */
 * {
   box-sizing: border-box;
 }
 
 html,
-body {
-  width: 100%;
-  min-height: 100%;
-  margin: 0;
-  padding: 0;
-}
-
-body {
-  min-width: 320px;
-  background: var(--bg);
-  color: var(--text);
-}
-
+body,
 #root {
   width: 100%;
-  max-width: none;
+  min-width: 320px;
+  min-height: 100vh;
   margin: 0;
   padding: 0;
-  text-align: left;
-  border: none;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
 }
 
-h1,
-h2 {
-  font-family: var(--heading);
-  font-weight: 500;
-  color: var(--text-h);
-}
-
-h1 {
-  font-size: 56px;
-  letter-spacing: -1.68px;
-  margin: 32px 0;
-}
-
-h2 {
-  font-size: 24px;
-  line-height: 118%;
-  letter-spacing: -0.24px;
-  margin: 0 0 8px;
-}
-
-@media (max-width: 1024px) {
-  h1 {
-    font-size: 36px;
-    margin: 20px 0;
-  }
-
-  h2 {
-    font-size: 20px;
-  }
-}
-
-p {
+/* Body */
+body {
+  font-family: 'DM Sans', sans-serif;
   margin: 0;
+  min-height: 100vh;
 }
 
-code,
-.counter {
-  font-family: var(--mono);
-  display: inline-flex;
-  border-radius: 4px;
-  color: var(--text-h);
+/* Consistent fonts for form elements */
+button,
+input,
+textarea,
+select {
+  font: inherit;
 }
 
-code {
-  font-size: 15px;
-  line-height: 135%;
-  padding: 4px 8px;
-  background: var(--code-bg);
+/* Buttons and links */
+button {
+  cursor: pointer;
 }
 
+button,
+a {
+  -webkit-tap-highlight-color: transparent;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* Images and SVGs */
+img,
+svg {
+  max-width: 100%;
+}
+
+/* Prevent unwanted overflow */
+#root {
+  overflow-x: clip;
+}
+
+/* Accessibility: reduce motion when requested */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
