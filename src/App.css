@@ -1115,8 +1115,9 @@ button.nav-item.active svg {
   background: transparent;
   font-size: 10px;
   font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
 }
-
 .channel.active {
   border-color: rgba(164, 119, 255, 0.2);
   color: #cbb0ff;
@@ -1809,4 +1810,167 @@ button.nav-item.active svg {
   .hero-visual {
     animation: none !important;
   }
+}
+
+/* Create Project Modal */
+
+.project-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 12, 30, 0.65);
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  z-index: 1000;
+}
+
+.project-modal {
+  width: 100%;
+  max-width: 480px;
+  max-height: 90vh;
+  overflow-y: auto;
+  background: var(--card-bg, #ffffff);
+  color: var(--text-color, #242039);
+  border-radius: 22px;
+  padding: 28px;
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.25);
+}
+
+.project-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.project-modal-header h2 {
+  margin: 0 0 8px;
+  font-size: 24px;
+}
+
+.project-modal-header p {
+  margin: 0;
+  opacity: 0.7;
+  font-size: 14px;
+}
+
+.modal-close {
+  border: none;
+  background: transparent;
+  font-size: 28px;
+  cursor: pointer;
+  color: inherit;
+}
+
+.project-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.project-form label {
+  font-size: 14px;
+  font-weight: 600;
+  margin-top: 8px;
+}
+
+.project-form input,
+.project-form textarea,
+.project-form select {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 12px 14px;
+  border: 1px solid #dedbea;
+  border-radius: 10px;
+  background: #faf9ff;
+  color: #242039;
+  font: inherit;
+  outline: none;
+}
+
+.project-form input:focus,
+.project-form textarea:focus,
+.project-form select:focus {
+  border-color: #8b5cf6;
+  box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.12);
+}
+
+.project-form textarea {
+  min-height: 90px;
+  resize: vertical;
+}
+
+.project-form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.cancel-project-btn,
+.create-project-btn {
+  padding: 11px 17px;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.cancel-project-btn {
+  background: transparent;
+  border: 1px solid #dedbea;
+  color: inherit;
+}
+
+.create-project-btn {
+  background: #8b5cf6;
+  border: 1px solid #8b5cf6;
+  color: white;
+}
+
+.create-project-btn:hover {
+  background: #7543e8;
+}
+
+@media (max-width: 480px) {
+  .project-modal {
+    padding: 20px;
+  }
+
+  .project-form-actions {
+    flex-direction: column-reverse;
+  }
+
+  .cancel-project-btn,
+  .create-project-btn {
+    width: 100%;
+  }
+}
+.project-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.project-title-row h3 {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.edit-project-btn {
+  background: #f5f3ff;
+  color: #7c3aed;
+  border: 1px solid #ddd6fe;
+  padding: 6px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  white-space: nowrap;
+  font-size: 12px;
+}
+
+.edit-project-btn:hover {
+  background: #ede9fe;
 }

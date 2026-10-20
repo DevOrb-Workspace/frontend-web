@@ -444,7 +444,6 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .orbit-rings,
   .orbit-moon,
   .orbit-login-card {
     animation: none;

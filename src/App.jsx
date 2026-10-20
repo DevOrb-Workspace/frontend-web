@@ -49,9 +49,9 @@ const initialTasks = [
 ]
 
 const initialMessages = [
-  { name: 'Riya Sharma', role: 'Design team', message: 'Uploaded the latest wireframes ✨', time: '10:42 AM', avatar: 'R', color: 'purple' },
-  { name: 'Kabir Mehta', role: 'Development', message: 'The new dashboard is coming together!', time: '10:35 AM', avatar: 'K', color: 'lime' },
-  { name: 'Sana Khan', role: 'Research team', message: 'Shared the project update with everyone.', time: '10:18 AM', avatar: 'S', color: 'coral' }
+  { name: 'Aayushi Agarwal', role: 'Design team', message: 'Uploaded the latest wireframes ✨', time: '10:42 AM', avatar: 'A', color: 'purple' },
+  { name: 'Srishti Kumari Sharma', role: 'Development', message: 'The new dashboard is coming together!', time: '10:35 AM', avatar: 'S', color: 'lime' },
+  { name: 'Ashutosh Yadav', role: 'Research team', message: 'Shared the project update with everyone.', time: '10:18 AM', avatar: 'A', color: 'coral' }
 ]
 
 function AnalyticsPage({ projects, tasks, onBack }) {
@@ -215,17 +215,61 @@ function App() {
     () => localStorage.getItem('team-theme') === 'dark'
   )
   const [activePage, setActivePage] = useState('overview')
+
+const [showProjectModal, setShowProjectModal] = useState(false)
+const [editingProject, setEditingProject] = useState(null)
+const [projectName, setProjectName] = useState('')
+const [projectDescription, setProjectDescription] = useState('')
+const [teamName, setTeamName] = useState('')
+const [projectColor, setProjectColor] = useState('purple')
+
   const [search, setSearch] = useState('')
-  const [projects, setProjects] = useState(() => {
+  
+
+
+const [projects, setProjects] = useState(() => {
   const saved = localStorage.getItem('orbit-projects')
-  return saved ? JSON.parse(saved) : initialProjects
+
+  if (saved) {
+    const parsedProjects = JSON.parse(saved)
+
+    return parsedProjects.map(project => {
+      if (project.name === 'Website Redesign') {
+        return {
+          ...project,
+          image: 'https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=700&q=80'
+        }
+      }
+
+      if (project.name === 'Mobile App') {
+        return {
+          ...project,
+          image: 'https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&w=700&q=80'
+        }
+      }
+
+      if (project.name === 'AI Assistant') {
+        return {
+          ...project,
+          image: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=700&q=80'
+        }
+      }
+
+      return project
+    })
+  }
+
+  return initialProjects
 })
+
+
 
 const [tasks, setTasks] = useState(() => {
   const saved = localStorage.getItem('orbit-tasks')
   return saved ? JSON.parse(saved) : initialTasks
 })
   const [messages, setMessages] = useState(initialMessages)
+  const [activeChannel, setActiveChannel] = useState('General')
   const [message, setMessage] = useState('')
 
   useEffect(() => {
@@ -250,23 +294,82 @@ useEffect(() => {
     ? Math.round((completed / tasks.length) * 100)
     : 0
 
-  function addProject() {
-    const name = prompt('Enter your new project name:')
-    if (!name?.trim()) return
+  
 
-    const colors = ['purple', 'lime', 'coral']
-    setProjects(previous => [
-      ...previous,
-      {
-        name: name.trim(),
-        team: 'New Team',
-        progress: 0,
-        color: colors[previous.length % colors.length],
-        image:
-          'https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=700&q=80'
-      }
-    ])
-  }
+function addProject() {
+  setEditingProject(null)
+  setProjectName('')
+  setProjectDescription('')
+  setTeamName('')
+  setProjectColor('purple')
+  setShowProjectModal(true)
+}
+
+function createProject(event) {
+  event.preventDefault()
+
+  if (!projectName.trim() || !teamName.trim()) return
+
+  setProjects(previous => [
+    ...previous,
+    {
+      name: projectName.trim(),
+      description: projectDescription.trim(),
+      team: teamName.trim(),
+      progress: 0,
+      color: projectColor,
+      image: '/project-cover.png'
+    }
+  ])
+
+
+  setShowProjectModal(false)
+setEditingProject(null)
+}
+
+function editProject(project) {
+  setEditingProject(project)
+  setProjectName(project.name)
+  setProjectDescription(project.description || '')
+  setTeamName(project.team)
+  setProjectColor(project.color)
+  setShowProjectModal(true)
+}
+
+function updateProject(event) {
+  event.preventDefault()
+
+  if (!editingProject || !projectName.trim() || !teamName.trim()) return
+
+  const oldName = editingProject.name
+  const newName = projectName.trim()
+
+  setProjects(previous =>
+    previous.map(project =>
+      project.name === oldName
+        ? {
+            ...project,
+            name: newName,
+            description: projectDescription.trim(),
+            team: teamName.trim(),
+            color: projectColor
+          }
+        : project
+    )
+  )
+
+  setTasks(previous =>
+    previous.map(task =>
+      task.project === oldName
+        ? { ...task, project: newName, color: projectColor }
+        : task
+    )
+  )
+
+  setShowProjectModal(false)
+  setEditingProject(null)
+}
+
 
   function addTask() {
     const title = prompt('Enter your new task:')
@@ -328,13 +431,19 @@ useEffect(() => {
     setMessage('')
   }
 
-  if (!isLoggedIn) {
+  
+if (!isLoggedIn) {
   return (
     <Login
-      onLoginSuccess={() => setIsLoggedIn(true)}
+      onLoginSuccess={(user) => {
+        setUserRole(user.role)
+        setUserEmail(user.email)
+        setIsLoggedIn(true)
+      }}
     />
   )
 }
+
   return (
     <div className={`app ${dark ? 'dark' : 'light'}`} id="home">
       <div className="decor decor-top">✦</div>
@@ -400,10 +509,18 @@ useEffect(() => {
             </button>
             <div className="profile">
               <div className="avatar">A</div>
-              <div className="profile-info">
-                <strong>Aayushi</strong>
-                <span>Team member</span>
-              </div>
+              
+<div className="profile-info">
+  <strong>{userEmail.split('@')[0]}</strong>
+  <span>
+    {userRole === 'product-manager'
+      ? 'Product Manager'
+      : userRole === 'senior-manager'
+        ? 'Senior Manager'
+        : 'Developer'}
+  </span>
+</div>
+
               <span className="profile-menu">•••</span>
             </div>
           </div>
@@ -566,7 +683,17 @@ useEffect(() => {
                       <span className={`project-tag ${project.color}`}>
                         {project.team}
                       </span>
-                      <h3>{project.name}</h3>
+                      <div className="project-title-row">
+  <h3>{project.name}</h3>
+
+  <button
+    type="button"
+    className="edit-project-btn"
+    onClick={() => editProject(project)}
+  >
+    ✏️ Edit
+  </button>
+</div>
                       <div className="project-meta">
                         <span>◷ Updated recently</span>
                         <span>♧ Team project</span>
@@ -602,13 +729,23 @@ useEffect(() => {
                 </div>
 
                 <div className="chat-channels">
-                  <span className="channel active">General</span>
-                  <span className="channel">Design</span>
-                  <span className="channel">Dev</span>
-                </div>
-
+  {['General', 'Design', 'Dev'].map(channel => (
+    <button
+      key={channel}
+      type="button"
+      className={`channel ${
+        activeChannel === channel ? 'active' : ''
+      }`}
+      onClick={() => setActiveChannel(channel)}
+    >
+      {channel}
+    </button>
+  ))}
+</div>
                 <div className="message-list">
-                  {messages.map((item, index) => (
+                  {messages
+  .filter(item => !item.channel || item.channel === activeChannel)
+  .map((item, index) => (
                     <article className="message-item" key={`${item.name}-${index}`}>
                       <div className={`message-avatar ${item.color}`}>
                         {item.avatar}
@@ -710,6 +847,93 @@ useEffect(() => {
             </>
           )}
         </section>
+                
+ 
+
+        {/* Create Project Modal */}
+        {showProjectModal && (
+          <div className="project-modal-backdrop">
+            <div className="project-modal">
+              <div className="project-modal-header">
+                <div>
+                  <h2>{editingProject ? 'Edit Project' : 'Create New Project'}</h2>
+
+<p>
+  {editingProject
+    ? 'Update your project details.'
+    : 'Add a new project to your workspace.'}
+</p>
+                </div>
+
+                <button
+                  type="button"
+                  className="modal-close"
+                  onClick={() => setShowProjectModal(false)}
+                >
+                  ×
+                </button>
+              </div>
+
+<form
+  className="project-form"
+  onSubmit={editingProject ? updateProject : createProject}
+>
+                <label>Project Name *</label>
+                <input
+                  type="text"
+                  placeholder="e.g. Website Redesign"
+                  value={projectName}
+                  onChange={e => setProjectName(e.target.value)}
+                  required
+                />
+
+                <label>Description</label>
+                <textarea
+                  placeholder="What is this project about?"
+                  value={projectDescription}
+                  onChange={e => setProjectDescription(e.target.value)}
+                />
+
+                <label>Team Name *</label>
+                <input
+                  type="text"
+                  placeholder="e.g. Design Team"
+                  value={teamName}
+                  onChange={e => setTeamName(e.target.value)}
+                  required
+                />
+
+                <label>Project Color</label>
+                <select
+                  value={projectColor}
+                  onChange={e => setProjectColor(e.target.value)}
+                >
+                  <option value="purple">Purple</option>
+                  <option value="lime">Lime</option>
+                  <option value="coral">Coral</option>
+                </select>
+
+                <div className="project-form-actions">
+                  <button
+                    type="button"
+                    className="cancel-project-btn"
+                     onClick={() => {
+  setShowProjectModal(false)
+  setEditingProject(null)
+}}
+                  >
+                    Cancel
+                  </button>
+
+                 <button type="submit" className="create-project-btn">
+  {editingProject ? 'Save Changes' : 'Create Project'}
+</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
+
       </main>
     </div>
   )

@@ -162,9 +162,73 @@
 
 /* Project progress */
 
+
+/* Task status breakdown below pie chart */
 .analytics-breakdown {
-  margin-top: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid #49365f;
 }
+
+.analytics-breakdown > div {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border: 1px solid #49365f;
+  border-radius: 10px;
+  background: #292039;
+  color: #d8cde8;
+  font-size: 13px;
+  transition: background 0.2s ease;
+}
+
+.analytics-breakdown > div:hover {
+  background: #352747;
+}
+
+.analytics-breakdown .status-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.analytics-breakdown .completed-dot {
+  background:#166534;
+  box-shadow: 0 0 8px #a78bfa66;
+}
+
+.analytics-breakdown .progress-dot {
+  background:#FACC15;
+  box-shadow: 0 0 8px #38bdf866;
+}
+
+.analytics-breakdown .todo-dot {
+  background:#EF4444;
+  box-shadow: 0 0 8px #f472b666;
+}
+
+.analytics-breakdown > div > span:nth-child(2) {
+  flex: 1;
+}
+
+.analytics-breakdown > div > strong {
+  display: grid;
+  place-items: center;
+  min-width: 28px;
+  height: 28px;
+  padding: 0 7px;
+  border-radius: 8px;
+  background: #443257;
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 700;
+}
+
 
 .project-analytics-row {
   display: grid;
@@ -300,4 +364,49 @@ button.activity-link {
 .analytics-panel .chart-area,
 .analytics-panel .pie-chart-area {
   background: transparent !important;
+}
+
+/* Pie chart legend */
+.chart-legend {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 18px;
+  margin-top: 20px;
+  padding: 12px 16px;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #cbd5e1;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.legend-color {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.legend-color.completed {
+  background-color: #166534;
+}
+
+.legend-color.in-progress {
+  background-color: #FACC15;
+}
+
+.legend-color.todo {
+  background-color:#EF4444;
+}
+
+.legend-count {
+  color: #ffffff;
+  font-weight: 700;
+  margin-left: 2px;
 }

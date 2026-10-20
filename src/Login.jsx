@@ -16,6 +16,7 @@ function OrbitArt() {
           <stop offset="55%" stopColor="#7C3AED" />
           <stop offset="100%" stopColor="#30206E" />
         </radialGradient>
+
         <linearGradient id="ring" x1="0" y1="0" x2="1" y2="1">
           <stop stopColor="#38BDF8" />
           <stop offset="50%" stopColor="#A78BFA" />
@@ -30,6 +31,7 @@ function OrbitArt() {
       </g>
 
       <circle cx="280" cy="220" r="76" fill="url(#planet)" />
+
       <ellipse
         cx="280"
         cy="220"
@@ -67,6 +69,7 @@ function OrbitMark() {
         <ellipse cx="24" cy="24" rx="20" ry="8" transform="rotate(-35 24 24)" />
         <ellipse cx="24" cy="24" rx="8" ry="20" transform="rotate(35 24 24)" />
       </g>
+
       <circle cx="8" cy="31" r="3.5" fill="#38BDF8" />
       <circle cx="37" cy="12" r="3.5" fill="#E879F9" />
       <circle cx="32" cy="39" r="3" fill="#A78BFA" />
@@ -79,6 +82,7 @@ export default function Login({ onLoginSuccess }) {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
+  const [role, setRole] = useState('developer');
 
   function handleLogin(event) {
     event.preventDefault();
@@ -90,7 +94,7 @@ export default function Login({ onLoginSuccess }) {
       return;
     }
 
-   onLoginSuccess?.({ email });
+    onLoginSuccess?.({ email, role });
   }
 
   return (
@@ -98,16 +102,20 @@ export default function Login({ onLoginSuccess }) {
       <section className="orbit-welcome">
         <a className="orbit-brand" href="#home" aria-label="Orbit home">
           <OrbitMark />
-          <span>orbit<span className="brand-dot">.</span></span>
+          <span>
+            orbit<span className="brand-dot">.</span>
+          </span>
         </a>
 
         <div className="orbit-intro">
           <p className="orbit-eyebrow">YOUR TEAM. YOUR UNIVERSE.</p>
+
           <h1>
             Better teams.
             <br />
             Bigger <span>dreams.</span>
           </h1>
+
           <p className="orbit-description">
             Organize, collaborate and build
             <br className="desktop-break" /> what matters — together.
@@ -127,15 +135,19 @@ export default function Login({ onLoginSuccess }) {
         <form className="orbit-login-card" onSubmit={handleLogin}>
           <div className="orbit-card-brand">
             <OrbitMark />
-            <span>orbit<span className="brand-dot">.</span></span>
+            <span>
+              orbit<span className="brand-dot">.</span>
+            </span>
           </div>
 
           <h2>Welcome back!</h2>
+
           <p className="orbit-login-subtitle">
             Sign in to continue to your workspace.
           </p>
 
           <label htmlFor="orbit-email">Email address</label>
+
           <div className="orbit-input-wrap">
             <span aria-hidden="true">✉</span>
             <input
@@ -150,6 +162,7 @@ export default function Login({ onLoginSuccess }) {
           </div>
 
           <label htmlFor="orbit-password">Password</label>
+
           <div className="orbit-input-wrap">
             <span aria-hidden="true">♙</span>
             <input
@@ -161,6 +174,7 @@ export default function Login({ onLoginSuccess }) {
               autoComplete="current-password"
               required
             />
+
             <button
               className="orbit-show-password"
               type="button"
@@ -171,13 +185,32 @@ export default function Login({ onLoginSuccess }) {
             </button>
           </div>
 
+          <label htmlFor="orbit-role">Select your role</label>
+
+          <div className="orbit-input-wrap">
+            <span aria-hidden="true">✦</span>
+
+            <select
+              id="orbit-role"
+              value={role}
+              onChange={(event) => setRole(event.target.value)}
+              required
+            >
+              <option value="developer">Developer</option>
+              <option value="product-manager">Product Manager</option>
+              <option value="senior-manager">Senior Manager</option>
+            </select>
+          </div>
+
           <label className="orbit-remember">
             <input type="checkbox" />
             <span>Remember me</span>
           </label>
 
           {error && (
-            <p className="orbit-login-error" role="alert">{error}</p>
+            <p className="orbit-login-error" role="alert">
+              {error}
+            </p>
           )}
 
           <button className="orbit-submit" type="submit">
