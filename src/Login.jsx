@@ -1,6 +1,9 @@
 
 import { useState } from 'react';
+import { login as loginUser } from './services/auth';
 import './Login.css';
+import { FcGoogle } from 'react-icons/fc';
+import { FaGithub } from 'react-icons/fa';
 
 function OrbitArt() {
   return (
@@ -77,24 +80,78 @@ function OrbitMark() {
   );
 }
 
-export default function Login({ onLoginSuccess }) {
+export default function Login({ onLoginSuccess, onForgotPassword }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
-  const [role, setRole] = useState('developer');
+  const [loading, setLoading] = useState(false);
+const handleGithubLogin = () => {
+  window.location.href =
+    'https://backend-core-iwxv.onrender.com/api/auth/oauth/github';
+};
 
-  function handleLogin(event) {
+const handleGoogleLogin = () => {
+  window.location.href =
+    'https://backend-core-iwxv.onrender.com/api/auth/oauth/google';
+};
+  async function handleLogin(event) {
     event.preventDefault();
     setError('');
 
-    // Temporary frontend demo login; no API is connected yet.
-    if (!email.trim() || !password.trim()) {
+    if (!email.trim() || !password) {
       setError('Please enter your email and password.');
       return;
     }
 
-    onLoginSuccess?.({ email, role });
+    setLoading(true);
+
+    try {
+      const data = await loginUser(email.trim(), password);
+
+      console.log('Login API response:', data);
+
+      if (data.success === false) {
+        throw new Error(data.message || 'Login failed.');
+      }
+
+      const user = data.user || data.profile;
+
+      if (!user?.role) {
+        setError(
+          'Login response received, but the user profile format needs verification.'
+        );
+        return;
+      }
+
+      const roleMap = {
+        user: 'developer',
+        developer: 'developer',
+        product_manager: 'product-manager',
+        'product-manager': 'product-manager',
+        senior_manager: 'senior-manager',
+        'senior-manager': 'senior-manager',
+      };
+
+      const mappedRole = roleMap[user.role];
+
+      if (!mappedRole) {
+        setError('Your account has an unsupported role.');
+        return;
+      }
+
+      onLoginSuccess?.({
+        email: user.email || email.trim(),
+        role: mappedRole,
+        user,
+      });
+    } catch (err) {
+      setError(
+        err.message || 'Unable to sign in. Please try again.'
+      );
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
@@ -185,27 +242,20 @@ export default function Login({ onLoginSuccess }) {
             </button>
           </div>
 
-          <label htmlFor="orbit-role">Select your role</label>
+         <div className="orbit-login-options">
+  <label className="orbit-remember">
+    <input type="checkbox" />
+    <span>Remember me</span>
+  </label>
 
-          <div className="orbit-input-wrap">
-            <span aria-hidden="true">✦</span>
-
-            <select
-              id="orbit-role"
-              value={role}
-              onChange={(event) => setRole(event.target.value)}
-              required
-            >
-              <option value="developer">Developer</option>
-              <option value="product-manager">Product Manager</option>
-              <option value="senior-manager">Senior Manager</option>
-            </select>
-          </div>
-
-          <label className="orbit-remember">
-            <input type="checkbox" />
-            <span>Remember me</span>
-          </label>
+  <button
+    type="button"
+    className="orbit-forgot-password"
+    onClick={() => onForgotPassword?.()}
+  >
+    Forgot password?
+  </button>
+</div>
 
           {error && (
             <p className="orbit-login-error" role="alert">
@@ -213,10 +263,37 @@ export default function Login({ onLoginSuccess }) {
             </p>
           )}
 
-          <button className="orbit-submit" type="submit">
-            Sign in <span aria-hidden="true">→</span>
+          <button
+            className="orbit-submit"
+            type="submit"
+            disabled={loading}
+          >
+            {loading ? 'Signing in...' : 'Sign in'}
+            {!loading && <span aria-hidden="true"> →</span>}
           </button>
+<div className="orbit-divider">
+  <span>or continue with</span>
+</div>
 
+<div className="orbit-social-buttons">
+  <button
+    type="button"
+    className="orbit-social-button"
+    onClick={handleGoogleLogin}
+  >
+    <FcGoogle className="social-logo" aria-hidden="true" />
+    <span>Google</span>
+  </button>
+
+  <button
+    type="button"
+    className="orbit-social-button"
+    onClick={handleGithubLogin}
+  >
+    <FaGithub className="social-logo github-logo" aria-hidden="true" />
+    <span>GitHub</span>
+  </button>
+</div>
           <p className="orbit-login-footer">
             Your team workspace, all in one place.
           </p>

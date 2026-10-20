@@ -453,3 +453,97 @@
     transition: none;
   }
 }
+.orbit-login-options {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 14px 0 20px;
+}
+
+.orbit-forgot-password {
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: #a78bfa;
+  font: inherit;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.orbit-forgot-password:hover {
+  color: #c4b5fd;
+  text-decoration: underline;
+}
+.orbit-divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 22px 0 16px;
+  color: #9993b8;
+  font-size: 12px;
+}
+
+.orbit-divider::before,
+.orbit-divider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: rgba(167, 139, 250, 0.22);
+}
+
+.orbit-social-buttons {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.orbit-social-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  min-height: 46px;
+  border: 1px solid rgba(167, 139, 250, 0.3);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.04);
+  color: inherit;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.orbit-social-button:hover {
+  background: rgba(167, 139, 250, 0.12);
+  border-color: #a78bfa;
+}
+
+.social-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 23px;
+  height: 23px;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.google-icon {
+  color: #4285f4;
+}
+
+.github-icon {
+  color: #d64016;
+  font-size: 12px;
+}
+.social-logo {
+  width: 21px;
+  height: 21px;
+  flex-shrink: 0;
+}
+
+.github-logo {
+  color: #000000;
+}
