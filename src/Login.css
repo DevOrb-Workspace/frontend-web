@@ -1,0 +1,456 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+.orbit-login-page,
+.orbit-login-page * {
+  box-sizing: border-box;
+}
+
+.orbit-login-page {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  font-family: 'Inter', sans-serif;
+  background: #f7f6ff;
+  color: #191737;
+}
+
+/* LEFT PANEL */
+.orbit-welcome {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  min-height: 100vh;
+  padding: 42px 7%;
+  display: flex;
+  flex-direction: column;
+  background:
+    radial-gradient(ellipse at 70% 55%, #29205b 0%, transparent 48%),
+    linear-gradient(145deg, #0d1028, #171333 65%, #100d25);
+  color: #fff;
+}
+
+.orbit-brand,
+.orbit-card-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+  font-size: 35px;
+  font-weight: 800;
+  letter-spacing: -1.8px;
+}
+
+.orbit-brand {
+  position: relative;
+  z-index: 2;
+  align-self: flex-start;
+}
+
+.orbit-mark {
+  width: 48px;
+  height: 48px;
+  flex-shrink: 0;
+  color: #a78bfa;
+}
+
+.brand-dot {
+  color: #8b5cf6;
+}
+
+.orbit-intro {
+  position: relative;
+  z-index: 2;
+  margin-top: 58px;
+}
+
+.orbit-eyebrow {
+  color: #b9a7ff;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 2.5px;
+}
+
+.orbit-intro h1 {
+  margin: 20px 0 16px;
+  font-size: clamp(32px, 3.5vw, 52px);
+  line-height: 1.2;
+  letter-spacing: -2px;
+  font-weight: 500;
+}
+
+.orbit-intro h1 span {
+  color: #a78bfa;
+}
+
+.orbit-description {
+  color: #b9b8d7;
+  font-size: 15px;
+  line-height: 1.9;
+}
+
+.orbit-art {
+  width: 110%;
+  max-width: 650px;
+  height: auto;
+  margin: -4px -5% -12px;
+  overflow: visible;
+  flex: 1;
+  min-height: 190px;
+  max-height: 390px;
+}
+
+.orbit-rings {
+  stroke-width: 1.1;
+  opacity: 0.7;
+  transform-origin: 280px 220px;
+  animation: orbitRotate 50s linear infinite;
+}
+
+.orbit-moon {
+  filter: drop-shadow(0 0 12px currentColor);
+}
+
+.moon-one {
+  animation: moonFloat 5s ease-in-out infinite;
+}
+
+.moon-two {
+  animation: moonFloat 6s ease-in-out infinite reverse;
+}
+
+.moon-three {
+  animation: moonFloat 4s ease-in-out infinite;
+}
+
+.orbit-benefits {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px;
+  padding-top: 15px;
+  color: #d2cdea;
+  font-size: 11px;
+}
+
+.orbit-benefits div {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.orbit-benefits span {
+  color: #bba2ff;
+  font-size: 22px;
+}
+
+/* RIGHT PANEL */
+.orbit-form-side {
+  min-width: 0;
+  min-height: 100vh;
+  padding: 45px 7%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background:
+    radial-gradient(circle at 100% 0%, #eae4ff, transparent 35%),
+    radial-gradient(circle at 0% 100%, #e8eaff, transparent 32%),
+    #f8f7ff;
+}
+
+.orbit-login-card {
+  width: 100%;
+  max-width: 465px;
+  padding: 42px;
+  border: 1px solid rgba(255, 255, 255, 0.95);
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.88);
+  box-shadow: 0 25px 80px rgba(48, 37, 100, 0.09);
+  animation: cardAppear 0.7s ease-out both;
+}
+
+.orbit-card-brand {
+  justify-content: center;
+  gap: 7px;
+  margin-bottom: 25px;
+  color: #191737;
+  font-size: 37px;
+}
+
+.orbit-card-brand .orbit-mark {
+  width: 42px;
+  height: 42px;
+}
+
+.orbit-login-card h2 {
+  margin: 0 0 8px;
+  font-size: clamp(25px, 2.5vw, 34px);
+  letter-spacing: -1px;
+}
+
+.orbit-login-subtitle {
+  margin: 0 0 30px;
+  color: #85839e;
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+.orbit-login-card > label:not(.orbit-remember) {
+  display: block;
+  margin: 20px 0 9px;
+  color: #4e4b6d;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.orbit-input-wrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  padding: 0 13px;
+  border: 1px solid #dedaf0;
+  border-radius: 10px;
+  background: #fff;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.orbit-input-wrap:focus-within {
+  border-color: #8b5cf6;
+  box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+}
+
+.orbit-input-wrap > span {
+  color: #8882ac;
+  font-size: 18px;
+}
+
+.orbit-input-wrap input {
+  width: 100%;
+  min-width: 0;
+  padding: 15px 0;
+  border: 0;
+  outline: none;
+  background: transparent;
+  color: #191737;
+  font: inherit;
+  font-size: 12px;
+}
+
+.orbit-input-wrap input::placeholder {
+  color: #aaa7c1;
+}
+
+.orbit-show-password {
+  flex-shrink: 0;
+  padding: 6px 0 6px 5px;
+  border: 0;
+  background: transparent;
+  color: #7c3aed;
+  font: inherit;
+  font-size: 10px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.orbit-remember {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-top: 20px;
+  color: #77738f;
+  font-size: 11px;
+  cursor: pointer;
+}
+
+.orbit-remember input {
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  accent-color: #7c3aed;
+}
+
+.orbit-login-error {
+  margin: 14px 0 0;
+  color: #dc2626;
+  font-size: 12px;
+}
+
+.orbit-submit {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 27px;
+  padding: 15px;
+  border: 0;
+  border-radius: 9px;
+  background: linear-gradient(100deg, #7138ec, #9a63f7);
+  box-shadow: 0 8px 20px rgba(124, 58, 237, 0.2);
+  color: white;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.orbit-submit span {
+  font-size: 19px;
+}
+
+.orbit-submit:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 26px rgba(124, 58, 237, 0.3);
+}
+
+.orbit-submit:active {
+  transform: translateY(0);
+}
+
+.orbit-login-footer {
+  margin: 25px 0 0;
+  padding-top: 22px;
+  border-top: 1px solid #eeebf6;
+  color: #8a86a6;
+  font-size: 10px;
+  text-align: center;
+}
+
+/* ANIMATIONS */
+@keyframes orbitRotate {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes moonFloat {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-12px);
+  }
+}
+
+@keyframes cardAppear {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* TABLETS AND MOBILE */
+@media (max-width: 850px) {
+  .orbit-login-page {
+    grid-template-columns: 1fr;
+  }
+
+  .orbit-welcome {
+    min-height: auto;
+    padding: 28px 7% 12px;
+  }
+
+  .orbit-intro {
+    margin-top: 30px;
+  }
+
+  .orbit-intro h1 {
+    font-size: 38px;
+  }
+
+  .orbit-art {
+    width: 100%;
+    min-height: 150px;
+    max-height: 250px;
+    margin: -5px 0;
+  }
+
+  .orbit-benefits {
+    padding: 12px 0;
+  }
+
+  .orbit-form-side {
+    min-height: auto;
+    padding: 30px 6% 45px;
+  }
+
+  .orbit-login-card {
+    max-width: 500px;
+  }
+}
+
+@media (max-width: 480px) {
+  .orbit-welcome {
+    padding: 23px 22px 10px;
+  }
+
+  .orbit-brand {
+    font-size: 29px;
+  }
+
+  .orbit-brand .orbit-mark {
+    width: 38px;
+    height: 38px;
+  }
+
+  .orbit-intro {
+    margin-top: 25px;
+  }
+
+  .orbit-intro h1 {
+    font-size: 34px;
+  }
+
+  .orbit-description {
+    font-size: 13px;
+  }
+
+  .orbit-art {
+    min-height: 125px;
+  }
+
+  .orbit-benefits {
+    gap: 12px;
+    font-size: 10px;
+  }
+
+  .orbit-form-side {
+    padding: 22px 16px 32px;
+  }
+
+  .orbit-login-card {
+    padding: 28px 22px;
+    border-radius: 18px;
+  }
+
+  .orbit-card-brand {
+    font-size: 31px;
+  }
+
+  .orbit-login-card h2 {
+    font-size: 27px;
+  }
+
+  .desktop-break {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .orbit-rings,
+  .orbit-moon,
+  .orbit-login-card {
+    animation: none;
+  }
+
+  .orbit-submit {
+    transition: none;
+  }
+}

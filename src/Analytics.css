@@ -2,7 +2,7 @@
 /* ========== ORBIT ANALYTICS PAGE ========== */
 
 .analytics-intro {
-  margin: 34px 0 24px;
+  margin: 24px 0 24px;
 }
 
 .analytics-intro .eyebrow {
@@ -16,6 +16,7 @@
   margin: 10px 0;
   font: 700 clamp(30px, 4vw, 43px)/1.15 'Space Grotesk', sans-serif;
   letter-spacing: -1.7px;
+  color: #f8f4ff;
 }
 
 .analytics-intro h1 span {
@@ -24,10 +25,12 @@
 
 .analytics-intro p {
   margin: 0;
-  color: var(--muted);
+  color: #b0a5c6;
   font-size: 13px;
   line-height: 1.7;
 }
+
+/* Summary cards */
 
 .analytics-summary {
   display: grid;
@@ -38,35 +41,41 @@
 
 .analytics-summary-card {
   display: grid;
-  gap: 9px;
+  gap: 10px;
   min-width: 0;
-  padding: 20px;
-  border: 1px solid var(--border);
+  padding: 22px;
+  border: 1px solid #3b2d50;
   border-radius: 18px;
-  background: var(--surface);
-  transition: transform 0.2s ease, border-color 0.2s ease;
+  background: #20192d;
+  color: #f8f4ff;
+  transition: transform 0.2s ease, border-color 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 .analytics-summary-card:hover {
   transform: translateY(-3px);
-  border-color: rgba(164, 119, 255, 0.55);
+  border-color: #a477ff;
+  box-shadow: 0 8px 24px rgba(128, 80, 232, 0.12);
 }
 
 .analytics-summary-card > span {
-  color: var(--muted);
+  color: #b0a5c6;
   font-size: 12px;
   font-weight: 700;
 }
 
 .analytics-summary-card strong {
+  color: #f8f4ff;
   font: 700 32px 'Space Grotesk', sans-serif;
 }
 
 .analytics-summary-card small {
-  color: var(--muted);
-  font-size: 10px;
+  color: #b0a5c6;
+  font-size: 11px;
   line-height: 1.5;
 }
+
+/* Chart layout */
 
 .analytics-grid {
   display: grid;
@@ -78,11 +87,31 @@
 .analytics-panel {
   min-width: 0;
   padding: 22px;
+  border: 1px solid #3b2d50;
+  border-radius: 20px;
+  background: #20192d;
+  color: #f8f4ff;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.analytics-panel:hover {
+  border-color: #8050e8;
+  box-shadow: 0 8px 24px rgba(128, 80, 232, 0.10);
 }
 
 .analytics-panel .panel-heading {
   align-items: flex-start;
   margin-bottom: 10px;
+}
+
+.analytics-panel h2,
+.analytics-panel h3 {
+  color: #f8f4ff;
+}
+
+.analytics-panel p {
+  color: #b0a5c6;
 }
 
 .analytics-icon {
@@ -97,23 +126,41 @@
   font-size: 19px;
 }
 
+/* Chart containers */
+
 .chart-area {
   width: 100%;
-  height: 275px;
+  height: 240px;
   min-width: 0;
   margin-top: 12px;
+  background: transparent;
 }
 
 .pie-chart-area {
-  height: 275px;
+  height: 240px;
+  background: transparent;
 }
 
 .chart-note {
   margin: 12px 0 0;
-  color: var(--muted);
-  font-size: 10px;
+  color: #b0a5c6;
+  font-size: 11px;
   line-height: 1.7;
 }
+
+/* Task status labels */
+
+.task-status-labels {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 12px;
+  color: #d8cde8;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+/* Project progress */
 
 .analytics-breakdown {
   margin-top: 18px;
@@ -123,7 +170,7 @@
   display: grid;
   gap: 10px;
   padding: 15px 0;
-  border-top: 1px solid var(--border);
+  border-top: 1px solid #3b2d50;
 }
 
 .project-analytics-info {
@@ -135,28 +182,35 @@
 
 .project-analytics-info strong {
   overflow-wrap: anywhere;
+  color: #f8f4ff;
   font-size: 12px;
 }
 
 .project-analytics-info span {
   flex-shrink: 0;
-  color: var(--muted);
+  color: #b0a5c6;
   font-size: 11px;
   font-weight: 700;
 }
+
+/* Empty state */
 
 .analytics-empty {
   display: grid;
   place-items: center;
   min-height: 230px;
-  color: var(--muted);
+  color: #b0a5c6;
   font-size: 12px;
   text-align: center;
 }
 
+/* Back button */
+
 .analytics-back {
   margin-top: 20px;
 }
+
+/* Navigation button compatibility */
 
 button.nav-item {
   width: 100%;
@@ -203,10 +257,47 @@ button.activity-link {
   }
 
   .chart-area {
-    height: 250px;
+    height: 220px;
   }
 
   .pie-chart-area {
-    height: 270px;
+    height: 220px;
   }
+
+  .analytics-grid {
+    gap: 12px;
+  }
+}
+
+/* Reduced motion accessibility */
+
+@media (prefers-reduced-motion: reduce) {
+  .analytics-summary-card,
+  .analytics-panel {
+    transition: none;
+  }
+
+  .analytics-summary-card:hover {
+    transform: none;
+  }
+}
+
+/* Force dark background on all Analytics cards */
+.analytics-summary-card,
+.analytics-grid .analytics-panel,
+.analytics-grid .panel,
+.analytics-panel.panel {
+  background-color: #20192d !important;
+  color: #f8f4ff !important;
+  border-color: #49365f !important;
+}
+
+.analytics-summary-card *,
+.analytics-panel * {
+  color: inherit;
+}
+
+.analytics-panel .chart-area,
+.analytics-panel .pie-chart-area {
+  background: transparent !important;
 }

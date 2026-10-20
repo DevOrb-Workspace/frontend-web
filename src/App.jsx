@@ -1,7 +1,20 @@
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  PieChart,
+  Pie,
+  Cell
+} from 'recharts'
 
+import './Analytics.css'
 import { useEffect, useState } from 'react'
 import './App.css'
-
+import Login from './Login'
 const initialProjects = [
   {
     name: 'Website Redesign',
@@ -41,20 +54,187 @@ const initialMessages = [
   { name: 'Sana Khan', role: 'Research team', message: 'Shared the project update with everyone.', time: '10:18 AM', avatar: 'S', color: 'coral' }
 ]
 
+function AnalyticsPage({ projects, tasks, onBack }) {
+  const completed = tasks.filter(task => task.status === 'Completed').length
+  const inProgress = tasks.filter(task => task.status === 'In Progress').length
+  const toDo = tasks.filter(task => task.status === 'To Do').length
+
+  const activity = [
+    { day: 'Mon', tasks: 4 },
+    { day: 'Tue', tasks: 7 },
+    { day: 'Wed', tasks: 5 },
+    { day: 'Thu', tasks: 9 },
+    { day: 'Fri', tasks: 6 },
+    { day: 'Sat', tasks: 3 },
+    { day: 'Sun', tasks: 5 }
+  ]
+
+  const statusData = [
+  { name: 'Completed', value: completed, color: '#166534' },
+  { name: 'In Progress', value: inProgress, color: '#facc15' },
+  { name: 'To Do', value: toDo, color: '#ef4444' }
+].filter(item => item.value > 0)
+
+  const rate = tasks.length
+    ? Math.round((completed / tasks.length) * 100)
+    : 0
+
+  return (
+    <div className="analytics-page">
+      <div className="analytics-intro">
+        <span className="eyebrow">YOUR WORK, VISUALIZED</span>
+        <h1>Analytics &amp; Insights</h1>
+        <p>Track your projects and team progress.</p>
+      </div>
+
+      <div className="analytics-summary">
+        <article className="analytics-summary-card">
+          <span>Total projects</span>
+          <h2>{projects.length}</h2>
+        </article>
+        <article className="analytics-summary-card">
+          <span>Total tasks</span>
+          <h2>{tasks.length}</h2>
+        </article>
+        <article className="analytics-summary-card">
+          <span>Completion rate</span>
+          <h2>{rate}%</h2>
+        </article>
+      </div>
+
+      <div className="analytics-grid">
+        <section className="panel analytics-panel">
+          <div className="panel-heading">
+            <div>
+              <h2>Weekly task activity</h2>
+              <p>Illustrative weekly data</p>
+            </div>
+          </div>
+
+          <div className="chart-area">
+            <ResponsiveContainer width="100%" height={260}>
+              <BarChart data={activity}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="day" />
+                <YAxis allowDecimals={false} />
+                <Tooltip />
+                <Bar dataKey="tasks" fill="#a78bfa" radius={[6, 6, 0, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </section>
+
+        <section className="panel analytics-panel">
+          <div className="panel-heading">
+            <div>
+              <h2>Task status</h2>
+              <p>Current task distribution</p>
+            </div>
+          </div>
+
+          <div className="pie-chart-area">
+            {statusData.length ? (
+              <ResponsiveContainer width="100%" height={240}>
+                <PieChart>
+                  <Pie
+                    data={statusData}
+                    dataKey="value"
+                    nameKey="name"
+                    innerRadius={55}
+                    outerRadius={85}
+                  >
+                    {statusData.map(item => (
+                      <Cell key={item.name} fill={item.color} />
+                    ))}
+                  </Pie>
+                  <Tooltip />
+                </PieChart>
+              </ResponsiveContainer>
+            ) : (
+              <p>No tasks yet.</p>
+            )}
+          </div>
+
+                   <div className="analytics-breakdown">
+            <div>
+              <span className="status-dot completed-dot" />
+              <span>Completed</span>
+              <strong>{completed}</strong>
+            </div>
+
+            <div>
+              <span className="status-dot progress-dot" />
+              <span>In Progress</span>
+              <strong>{inProgress}</strong>
+            </div>
+
+            <div>
+              <span className="status-dot todo-dot" />
+              <span>To Do</span>
+              <strong>{toDo}</strong>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <section className="panel analytics-panel"></section> 
+      <section className="panel analytics-panel">
+        <div className="panel-heading">
+          <div>
+            <h2>Project progress</h2>
+            <p>Progress across your projects</p>
+          </div>
+        </div>
+
+        {projects.map(project => (
+          <div className="project-analytics-row" key={project.name}>
+            <div className="project-analytics-info">
+              <strong>{project.name}</strong>
+              <span>{project.progress}%</span>
+            </div>
+            <div className="project-progress">
+              <span
+                className={project.color}
+                style={{ width: `${project.progress}%` }}
+              />
+            </div>
+          </div>
+        ))}
+      </section>
+
+      <button className="secondary-button analytics-back" onClick={onBack}>
+        ← Back to overview
+      </button>
+    </div>
+  )
+}
+
 function App() {
+  const [isLoggedIn, setIsLoggedIn] = useState(false)
   const [dark, setDark] = useState(
     () => localStorage.getItem('team-theme') === 'dark'
   )
+  const [activePage, setActivePage] = useState('overview')
   const [search, setSearch] = useState('')
-  const [projects, setProjects] = useState(initialProjects)
-  const [tasks, setTasks] = useState(initialTasks)
+  const [projects, setProjects] = useState(() => {
+  const saved = localStorage.getItem('orbit-projects')
+  return saved ? JSON.parse(saved) : initialProjects
+})
+
+const [tasks, setTasks] = useState(() => {
+  const saved = localStorage.getItem('orbit-tasks')
+  return saved ? JSON.parse(saved) : initialTasks
+})
   const [messages, setMessages] = useState(initialMessages)
   const [message, setMessage] = useState('')
 
   useEffect(() => {
-    localStorage.setItem('team-theme', dark ? 'dark' : 'light')
-  }, [dark])
+  localStorage.setItem('orbit-projects', JSON.stringify(projects))
+}, [projects])
 
+useEffect(() => {
+  localStorage.setItem('orbit-tasks', JSON.stringify(tasks))
+}, [tasks])
   const query = search.toLowerCase()
 
   const filteredProjects = projects.filter(project =>
@@ -148,6 +328,13 @@ function App() {
     setMessage('')
   }
 
+  if (!isLoggedIn) {
+  return (
+    <Login
+      onLoginSuccess={() => setIsLoggedIn(true)}
+    />
+  )
+}
   return (
     <div className={`app ${dark ? 'dark' : 'light'}`} id="home">
       <div className="decor decor-top">✦</div>
@@ -161,30 +348,50 @@ function App() {
             orbit<span className="brand-dot">.</span>
           </a>
 
+       
           <p className="menu-label">YOUR WORKSPACE</p>
 
           <nav className="navigation">
-            <a className="nav-item active" href="#home">
-              <span>▦</span> Overview <b>↗</b>
+            <a
+              className={`nav-item ${activePage === 'overview' ? 'active' : ''}`}
+              href="#home"
+              onClick={() => setActivePage('overview')}
+            >
+              <span>⌂</span> Home
+              {activePage === 'overview' && <b>↗</b>}
             </a>
+
             <a className="nav-item" href="#projects">
               <span>◈</span> My Projects
             </a>
+
             <a className="nav-item" href="#tasks">
               <span>✓</span> My Tasks
             </a>
+
             <a className="nav-item" href="#activity">
               <span>↗</span> Activity
             </a>
+
             <a className="nav-item" href="#team">
               <span>♧</span> Teams
             </a>
+
             <a className="nav-item" href="#chat">
               <span>▤</span> Project Chat
             </a>
+
+            <button
+              className={`nav-item ${activePage === 'analytics' ? 'active' : ''}`}
+              onClick={() => setActivePage('analytics')}
+            >
+              <span>◷</span> Analytics
+              {activePage === 'analytics' && <b>↗</b>}
+            </button>
           </nav>
 
           <div className="sidebar-bottom">
+
             <div className="settings-card">
               <span>⚙</span> Settings
             </div>
@@ -240,8 +447,18 @@ function App() {
               <div className="avatar top-avatar">A</div>
             </div>
           </header>
+        
 
-          <section className="hero">
+          {activePage === 'analytics' ? (
+            <AnalyticsPage
+              projects={projects}
+              tasks={tasks}
+              onBack={() => setActivePage('overview')}
+            />
+          ) : (
+            <>
+              <section className="hero">
+         
             <div className="hero-copy">
               <span className="eyebrow">✦ YOUR TEAM WORKSPACE</span>
               <h1>
@@ -486,10 +703,12 @@ function App() {
             </div>
           </section>
 
-          <footer className="footer">
+                    <footer className="footer">
             <span>Made for teams that make things happen <b>♥</b></span>
             <span>One workspace. More possibilities.</span>
           </footer>
+            </>
+          )}
         </section>
       </main>
     </div>
