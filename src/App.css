@@ -1974,3 +1974,400 @@ button.nav-item.active svg {
 .edit-project-btn:hover {
   background: #ede9fe;
 }
+
+/* =========================================
+   ORBIT ROLE-BASED THEMES
+   ========================================= */
+
+/* Developer: Dark navy + purple + lime */
+
+/* Developer: Light theme */
+.app.light.role-developer {
+  --bg: #f4f5fb;
+  --surface: #ffffff;
+  --card: #ffffff;
+  --surface-soft: #e9e8f7;
+  --text: #25243b;
+  --muted: #777d98;
+  --border: #dfe2f0;
+  --sidebar: #ffffff;
+  --purple: #7954d9;
+  --green: #4b936f;
+  --pink: #d85c9b;
+  --cyan: #328f9b;
+  --lime: #b8e65c;
+}
+
+/* Developer: Dark theme */
+.app.dark.role-developer {
+  --bg: #101426;
+  --surface: #191e33;
+  --card: #191e33;
+  --surface-soft: #252b45;
+  --text: #f3f2ff;
+  --muted: #a3abc4;
+  --border: #303751;
+  --sidebar: #151a2d;
+  --purple: #a477ff;
+  --green: #c8f56a;
+  --pink: #ff9fce;
+  --cyan: #65e6e0;
+  --lime: #c8f56a;
+}
+
+
+
+/* Product Manager: Pink + lavender + mint */
+.app.role-product-manager {
+  --bg: #fff7fb;
+  --surface: #ffffff;
+  --card: #ffffff;
+  --text: #38263f;
+  --muted: #89768d;
+  --border: #f0dce9;
+  --purple: #9b6bdb;
+  --green: #4eaa8d;
+  --pink: #ed82b5;
+  --cyan: #66bfb0;
+  --lime: #bcebd9;
+}
+
+/* Senior Manager: Burgundy + champagne gold + ivory */
+.app.role-senior-manager {
+  --bg: #faf5ed;
+  --surface: #fffaf2;
+  --card: #fffaf2;
+  --text: #402331;
+  --muted: #8b747a;
+  --border: #e9d8c9;
+  --purple: #813b58;
+  --green: #58856b;
+  --pink: #c69b65;
+  --cyan: #8d6a7a;
+  --lime: #d9bd80;
+}
+
+/* Shared dashboard surfaces */
+.app.role-developer,
+.app.role-product-manager,
+.app.role-senior-manager {
+  background: var(--bg);
+  color: var(--text);
+}
+
+.app.role-developer .panel,
+.app.role-developer .stat-card {
+  background: var(--surface);
+  border-color: var(--border);
+  color: var(--text);
+}
+
+.app.role-product-manager .panel,
+.app.role-product-manager .stat-card {
+  background: var(--surface);
+  border-color: var(--border);
+  color: var(--text);
+  box-shadow: 0 8px 25px rgba(177, 110, 157, 0.07);
+}
+
+.app.role-senior-manager .panel,
+.app.role-senior-manager .stat-card {
+  background: var(--surface);
+  border-color: var(--border);
+  color: var(--text);
+  box-shadow: 0 8px 25px rgba(100, 60, 48, 0.06);
+}
+
+/* Sidebar and navigation */
+.app.role-product-manager .sidebar {
+  background: #fff0f7;
+  border-color: var(--border);
+}
+
+.app.role-senior-manager .sidebar {
+  background: #f1e4d8;
+  border-color: var(--border);
+}
+
+.app.role-product-manager .nav-item.active {
+  color: #7c3f91;
+  background: #f4e5ff;
+}
+
+.app.role-senior-manager .nav-item.active {
+  color: #fffaf2;
+  background: #813b58;
+}
+
+/* Hero banner */
+.app.role-developer .hero {
+  background: linear-gradient(120deg, #202744, #38235a);
+  border: 1px solid #514071;
+}
+
+.app.role-product-manager .hero {
+  background: linear-gradient(120deg, #f9d9e9, #e9e0ff 65%, #d8f5e9);
+  border: 1px solid #edd5eb;
+  color: #38263f;
+}
+
+.app.role-senior-manager .hero {
+  background: linear-gradient(120deg, #5b263d, #813b58 65%, #a77b59);
+  border: 1px solid #a77b59;
+  color: #fff8ed;
+}
+
+.app.role-product-manager .hero h1,
+.app.role-product-manager .hero p,
+.app.role-product-manager .hero .eyebrow {
+  color: #38263f;
+}
+
+.app.role-senior-manager .hero h1,
+.app.role-senior-manager .hero p,
+.app.role-senior-manager .hero .eyebrow {
+  color: #fff8ed;
+}
+
+/* Accent buttons */
+.app.role-product-manager .primary-button {
+  background: #9b6bdb;
+  color: #ffffff;
+}
+
+.app.role-senior-manager .primary-button {
+  background: #d9bd80;
+  color: #402331;
+}
+
+/* Keep role themes readable on smaller screens */
+@media (max-width: 650px) {
+  .app.role-product-manager .sidebar,
+  .app.role-senior-manager .sidebar {
+    background: var(--surface);
+  }
+}
+
+/* ===== ORBIT ROLE-BASED DARK THEMES ===== */
+
+/* Developer: Navy + purple + lime */
+.app.dark.role-developer {
+  --bg: #101426;
+  --surface: #191e33;
+  --card: #191e33;
+  --text: #f3f2ff;
+  --muted: #a3abc4;
+  --border: #303751;
+  --purple: #a477ff;
+  --green: #c8f56a;
+  --pink: #ff9fce;
+  --cyan: #65e6e0;
+  --lime: #c8f56a;
+}
+
+/* Product Manager: Dark plum + pink + mint */
+.app.dark.role-product-manager {
+  --bg: #211627;
+  --surface: #302038;
+  --card: #302038;
+  --text: #fff3fa;
+  --muted: #c6aabd;
+  --border: #51354f;
+  --purple: #c49aff;
+  --green: #79dfb8;
+  --pink: #ff9fce;
+  --cyan: #78d9ca;
+  --lime: #bcebd9;
+}
+
+/* Senior Manager: Burgundy + charcoal + gold */
+.app.dark.role-senior-manager {
+  --bg: #21151c;
+  --surface: #302029;
+  --card: #302029;
+  --text: #fff5e9;
+  --muted: #c8adb3;
+  --border: #593542;
+  --purple: #d49bb4;
+  --green: #91b69a;
+  --pink: #d9bd80;
+  --cyan: #c99aaa;
+  --lime: #e8d29e;
+}
+
+/* Shared dark surfaces */
+.app.dark.role-developer .panel,
+.app.dark.role-developer .stat-card,
+.app.dark.role-product-manager .panel,
+.app.dark.role-product-manager .stat-card,
+.app.dark.role-senior-manager .panel,
+.app.dark.role-senior-manager .stat-card {
+  background: var(--surface);
+  color: var(--text);
+  border-color: var(--border);
+}
+
+/* Product Manager dark sidebar */
+.app.dark.role-product-manager .sidebar {
+  background: #281a30;
+  border-color: var(--border);
+}
+
+/* Senior Manager dark sidebar */
+.app.dark.role-senior-manager .sidebar {
+  background: #291820;
+  border-color: var(--border);
+}
+
+/* Product Manager dark hero */
+.app.dark.role-product-manager .hero {
+  background: linear-gradient(120deg, #49304d, #302744 65%, #214039);
+  border-color: var(--border);
+  color: var(--text);
+}
+
+/* Senior Manager dark hero */
+.app.dark.role-senior-manager .hero {
+  background: linear-gradient(120deg, #482333, #633047 65%, #60462e);
+  border-color: var(--border);
+  color: var(--text);
+}
+
+.app.dark.role-product-manager .hero h1,
+.app.dark.role-product-manager .hero p,
+.app.dark.role-product-manager .hero .eyebrow,
+.app.dark.role-senior-manager .hero h1,
+.app.dark.role-senior-manager .hero p,
+.app.dark.role-senior-manager .hero .eyebrow {
+  color: var(--text);
+}
+
+/* ===== FIX: DEVELOPER FULL DARK MODE ===== */
+
+.app.dark.role-developer .dashboard-shell,
+.app.dark.role-developer .workspace {
+  background: var(--bg);
+  color: var(--text);
+}
+
+.app.dark.role-developer .topbar,
+.app.dark.role-developer .section-heading {
+  color: var(--text);
+}
+
+.app.dark.role-developer .hero {
+  background: linear-gradient(120deg, #202744, #38235a);
+  border-color: #514071;
+  color: #f3f2ff;
+}
+
+.app.dark.role-developer .hero h1,
+.app.dark.role-developer .hero p,
+.app.dark.role-developer .hero .eyebrow {
+  color: #f3f2ff;
+}
+
+.app.dark.role-developer .panel,
+.app.dark.role-developer .stat-card,
+.app.dark.role-developer .project-card,
+.app.dark.role-developer .analytics-panel,
+.app.dark.role-developer .analytics-summary-card {
+  background: var(--surface) !important;
+  color: var(--text) !important;
+  border-color: var(--border) !important;
+}
+
+.app.dark.role-developer .panel h2,
+.app.dark.role-developer .stat-card h3,
+.app.dark.role-developer .project-card h3,
+.app.dark.role-developer .analytics-panel h2 {
+  color: var(--text);
+}
+
+.app.dark.role-developer .panel p,
+.app.dark.role-developer .stat-card p,
+.app.dark.role-developer .project-card p {
+  color: var(--muted);
+}
+
+.app.dark.role-developer .project-form input,
+.app.dark.role-developer .project-form textarea,
+.app.dark.role-developer .project-form select {
+  background: var(--surface);
+  color: var(--text);
+  border-color: var(--border);
+}
+
+.app.dark.role-developer .project-modal {
+  background: var(--surface);
+  color: var(--text);
+}
+
+.app.dark.role-developer .project-modal-header h2,
+.app.dark.role-developer .project-modal-header p {
+  color: var(--text);
+}
+
+/* ===== ORBIT THEME FIX: ALL DASHBOARD SECTIONS ===== */
+
+.app.light,
+.app.dark {
+  color: var(--text);
+}
+
+.app.light .dashboard-shell,
+.app.light .workspace,
+.app.dark .dashboard-shell,
+.app.dark .workspace {
+  background-color: var(--bg);
+  color: var(--text);
+}
+
+.app.light .panel,
+.app.light .stat-card,
+.app.light .project-card,
+.app.dark .panel,
+.app.dark .stat-card,
+.app.dark .project-card {
+  background-color: var(--surface) !important;
+  color: var(--text) !important;
+  border-color: var(--border) !important;
+}
+
+.app.light .panel h2,
+.app.light .panel h3,
+.app.light .stat-card h2,
+.app.light .stat-card h3,
+.app.dark .panel h2,
+.app.dark .panel h3,
+.app.dark .stat-card h2,
+.app.dark .stat-card h3 {
+  color: var(--text);
+}
+
+.app.light .panel p,
+.app.light .stat-card p,
+.app.light .project-card p,
+.app.dark .panel p,
+.app.dark .stat-card p,
+.app.dark .project-card p {
+  color: var(--muted);
+}
+
+/* Modal and form controls */
+.app.light .project-modal,
+.app.dark .project-modal {
+  background: var(--surface);
+  color: var(--text);
+}
+
+.app.light .project-form input,
+.app.light .project-form textarea,
+.app.light .project-form select,
+.app.dark .project-form input,
+.app.dark .project-form textarea,
+.app.dark .project-form select {
+  background: var(--bg);
+  color: var(--text);
+  border-color: var(--border);
+}
