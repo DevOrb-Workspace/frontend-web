@@ -1,0 +1,854 @@
+
+.landing {
+  min-height: 100vh;
+  overflow: hidden;
+  color: #f6f3ff;
+  background: #0b0916;
+  font-family: Inter, system-ui, sans-serif;
+}
+
+.landing a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.landing-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 24px 7%;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.landing-brand {
+  font-size: 25px;
+  font-weight: 800;
+  letter-spacing: -1px;
+}
+
+.landing-brand:first-letter {
+  color: #c5ff72;
+}
+
+.landing-links {
+  display: flex;
+  gap: 30px;
+  color: #b8b1c9;
+  font-size: 14px;
+}
+
+.landing-nav button,
+.landing-actions button,
+.landing-cta button {
+  padding: 13px 19px;
+  border: 0;
+  border-radius: 9px;
+  color: #11120c;
+  background: #c5ff72;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.2s, background 0.2s;
+}
+
+.landing button:hover {
+  transform: translateY(-2px);
+  background: #d7ff9c;
+}
+
+.landing-hero {
+  position: relative;
+  padding: 105px 20px 90px;
+  text-align: center;
+  background:
+    radial-gradient(ellipse at 50% 25%, rgba(111, 66, 193, 0.25), transparent 55%),
+    #0b0916;
+}
+
+.landing-eyebrow {
+  color: #c5ff72;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2px;
+}
+
+.landing-hero h1 {
+  margin: 25px 0 20px;
+  font-size: clamp(42px, 7vw, 82px);
+  line-height: 1.04;
+  letter-spacing: -4px;
+}
+
+.landing-hero h1 span {
+  color: #b9a0ff;
+}
+
+.landing-hero > p {
+  max-width: 570px;
+  margin: 0 auto;
+  color: #aaa3bd;
+  font-size: 16px;
+  line-height: 1.9;
+}
+
+.landing-actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 24px;
+  margin-top: 30px;
+}
+
+.landing-actions a {
+  color: #e1daef;
+  font-size: 14px;
+}
+
+.landing-orbit-art {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 290px;
+  height: 220px;
+  margin: 50px auto 0;
+}
+
+.orbit-ring {
+  position: absolute;
+  width: 180px;
+  height: 180px;
+  border: 1px solid rgba(185, 160, 255, 0.4);
+  border-radius: 50%;
+  transform: rotate(-25deg) scaleY(0.45);
+}
+
+.ring-two {
+  width: 230px;
+  height: 230px;
+  border-color: rgba(197, 255, 114, 0.5);
+  transform: rotate(35deg) scaleY(0.5);
+}
+
+.ring-three {
+  width: 275px;
+  height: 275px;
+  border-color: rgba(185, 160, 255, 0.25);
+  transform: rotate(-50deg) scaleY(0.4);
+}
+
+.orbit-core {
+  display: grid;
+  place-items: center;
+  width: 78px;
+  height: 78px;
+  border: 1px solid #d4c5ff;
+  border-radius: 50%;
+  color: #c5ff72;
+  background: linear-gradient(145deg, #39275e, #151020);
+  box-shadow: 0 0 65px rgba(151, 108, 255, 0.3);
+  font-size: 36px;
+  font-weight: 800;
+}
+
+.landing-quote {
+  padding: 90px 20px;
+  border-top: 1px solid #211b31;
+  border-bottom: 1px solid #211b31;
+  background: #100d1c;
+  text-align: center;
+}
+
+.landing-quote > span,
+.landing-feature-grid article > span {
+  color: #c5ff72;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+}
+
+.landing-quote h2 {
+  max-width: 850px;
+  margin: 25px auto 18px;
+  font-size: clamp(28px, 4vw, 47px);
+  line-height: 1.3;
+  letter-spacing: -1.5px;
+}
+
+.landing-quote p,
+.landing-feature-grid p {
+  color: #aaa3bd;
+  line-height: 1.8;
+}
+
+.landing-features {
+  padding: 100px 7%;
+}
+
+.landing-features > h2,
+.landing-cta h2 {
+  margin: 20px 0 35px;
+  font-size: clamp(32px, 4vw, 52px);
+  line-height: 1.15;
+  letter-spacing: -2px;
+}
+
+.landing-feature-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.landing-feature-grid article {
+  padding: 30px 24px;
+  border: 1px solid #302640;
+  border-radius: 16px;
+  background: linear-gradient(145deg, #191326, #100d19);
+  transition: transform 0.25s, border-color 0.25s;
+}
+
+.landing-feature-grid article:hover {
+  transform: translateY(-5px);
+  border-color: #8b70c9;
+}
+
+.landing-feature-grid h3 {
+  margin-top: 30px;
+  font-size: 23px;
+  line-height: 1.35;
+}
+
+.landing-feature-grid p {
+  font-size: 14px;
+}
+
+.landing-cta {
+  margin: 0 7% 70px;
+  padding: 65px 25px;
+  border: 1px solid #3c3152;
+  border-radius: 22px;
+  background:
+    radial-gradient(ellipse at top right, rgba(135, 93, 210, 0.25), transparent 65%),
+    #151020;
+  text-align: center;
+}
+
+.landing-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 25px 7%;
+  border-top: 1px solid #211b31;
+  color: #aaa3bd;
+  font-size: 13px;
+}
+
+@media (max-width: 700px) {
+  .landing-nav {
+    padding: 20px;
+  }
+
+  .landing-links {
+    display: none;
+  }
+
+  .landing-hero {
+    padding: 80px 22px 55px;
+  }
+
+  .landing-hero h1 {
+    letter-spacing: -2px;
+  }
+
+  .landing-feature-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .landing-features {
+    padding: 70px 22px;
+  }
+
+  .landing-cta {
+    margin: 0 20px 45px;
+    padding: 45px 20px;
+  }
+
+  .landing-footer {
+    flex-direction: column;
+    text-align: center;
+  }
+}
+.typing-text {
+  display: inline-block;
+  min-height: 1.15em;
+}
+
+.typing-cursor {
+  display: inline-block;
+  color: #c5ff72;
+  margin-left: 3px;
+  animation: cursorBlink 0.75s steps(2, start) infinite;
+}
+
+@keyframes cursorBlink {
+  to {
+    visibility: hidden;
+  }
+}
+
+/* Theme toggle button */
+.theme-toggle {
+  width: 42px;
+  height: 42px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(180, 160, 220, 0.35);
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.07);
+  color: inherit;
+  font-size: 19px;
+  cursor: pointer;
+  transition: transform 0.25s ease, background 0.25s ease;
+  flex-shrink: 0;
+}
+
+.theme-toggle:hover {
+  transform: rotate(15deg) scale(1.08);
+}
+
+/* Smooth theme transition */
+.landing,
+.landing * {
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease,
+    border-color 0.3s ease;
+}
+
+/* Light theme */
+.landing.light-mode {
+  background: #f7f5ff;
+  color: #211637;
+}
+
+.landing.light-mode .landing-nav {
+  background: rgba(247, 245, 255, 0.92);
+}
+
+.landing.light-mode .landing-brand {
+  color: #211637;
+}
+
+.landing.light-mode .landing-links a {
+  color: #514568;
+}
+
+.landing.light-mode .landing-hero p,
+.landing.light-mode .landing-quote p,
+.landing.light-mode .landing-feature-grid article p {
+  color: #625773;
+}
+
+.landing.light-mode .landing-eyebrow,
+.landing.light-mode .landing-quote > span,
+.landing.light-mode .landing-feature-grid article > span {
+  color: #6650a4;
+}
+
+.landing.light-mode .landing-hero h1,
+.landing.light-mode .landing-quote h2,
+.landing.light-mode .landing-features h2,
+.landing.light-mode .landing-features h3,
+.landing.light-mode .landing-cta h2 {
+  color: #211637;
+}
+
+.landing.light-mode .landing-hero h1 span {
+  color: #7956c8;
+}
+
+.landing.light-mode .landing-feature-grid article {
+  background: #ffffff;
+  border-color: #e4dcf4;
+  box-shadow: 0 10px 30px rgba(60, 35, 100, 0.06);
+}
+
+.landing.light-mode .landing-quote {
+  border-color: #e4dcf4;
+}
+
+.landing.light-mode .landing-footer {
+  border-color: #e4dcf4;
+  color: #625773;
+}
+
+.landing.light-mode .landing-footer .landing-brand {
+  color: #211637;
+}
+
+.landing.light-mode .theme-toggle {
+  background: #ffffff;
+  border-color: #d8cbed;
+}
+
+.landing.light-mode .landing-cta {
+  background: #eee8fb;
+}
+
+/* Orbit light mode fixes */
+.landing.light-mode .landing-hero {
+  background: radial-gradient(
+    ellipse at 50% 30%,
+    #eee5ff 0%,
+    #f7f5ff 58%,
+    #f7f5ff 100%
+  );
+}
+
+.landing.light-mode .landing-eyebrow {
+  color: #7550bd;
+}
+
+.landing.light-mode .landing-hero h1 {
+  color: #211637;
+}
+
+.landing.light-mode .landing-hero h1 span {
+  color: #8058d6;
+}
+
+.landing.light-mode .landing-hero p {
+  color: #625773;
+}
+
+.landing.light-mode .landing-orbit-art .orbit-ring {
+  opacity: 0.8;
+}
+
+.landing.light-mode .landing-orbit-art .orbit-core {
+  background: #eee5ff;
+  color: #7550bd;
+  border-color: #b9a0e8;
+}
+
+.landing .theme-toggle {
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border-radius: 50%;
+  background: transparent;
+  border: 1px solid rgba(185, 160, 232, 0.5);
+  color: inherit;
+  box-shadow: none;
+  outline-offset: 3px;
+}
+
+.landing .theme-toggle:hover {
+  background: rgba(185, 160, 232, 0.15);
+  transform: rotate(12deg);
+}
+
+.landing-nav-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.landing-nav-actions .theme-toggle {
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  border: 1px solid rgba(185, 160, 232, 0.4);
+  background: transparent;
+  color: inherit;
+  font-size: 18px;
+  cursor: pointer;
+  box-shadow: none;
+}
+
+.landing-nav-actions .theme-toggle:hover {
+  background: rgba(185, 160, 232, 0.15);
+  transform: rotate(12deg);
+}
+
+.landing-nav-actions > button:last-child {
+  flex-shrink: 0;
+}
+
+@media (max-width: 700px) {
+  .landing-nav {
+    gap: 12px;
+  }
+
+  .landing-links {
+    gap: 10px;
+  }
+
+  .landing-nav-actions {
+    gap: 8px;
+  }
+
+  .landing-nav-actions .theme-toggle {
+    width: 36px;
+    height: 36px;
+  }
+}
+
+/* Feature card hover effects */
+.landing-feature-grid article {
+  position: relative;
+  overflow: hidden;
+  transform: translateY(0);
+  transition:
+    transform 0.28s ease,
+    border-color 0.28s ease,
+    box-shadow 0.28s ease;
+}
+
+.landing-feature-grid article::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 0;
+  height: 3px;
+  background: #c5ff72;
+  transition: width 0.28s ease;
+}
+
+.landing-feature-grid article:hover {
+  transform: translateY(-7px);
+  border-color: #a98aff;
+  box-shadow: 0 16px 38px rgba(139, 92, 246, 0.18);
+}
+
+.landing-feature-grid article:hover::after {
+  width: 100%;
+}
+
+.landing-feature-grid article h3 {
+  transition: color 0.25s ease;
+}
+
+.landing-feature-grid article:hover h3 {
+  color: #a98aff;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .landing-feature-grid article,
+  .landing-feature-grid article::after,
+  .landing-feature-grid article h3 {
+    transition: none;
+  }
+
+  .landing-feature-grid article:hover {
+    transform: none;
+  }
+}
+
+/* Stronger Orbit feature hover */
+.landing .landing-feature-grid article {
+  position: relative;
+  z-index: 1;
+  cursor: pointer;
+  transition: all 0.3s ease !important;
+}
+
+.landing .landing-feature-grid article:hover {
+  transform: translateY(-10px) scale(1.02) !important;
+  border: 1px solid #a98aff !important;
+  box-shadow: 0 18px 45px rgba(139, 92, 246, 0.28) !important;
+}
+
+.landing .landing-feature-grid article::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 4px;
+  width: 0;
+  background: #c5ff72;
+  transition: width 0.3s ease;
+}
+
+.landing .landing-feature-grid article:hover::after {
+  width: 100%;
+}
+
+.landing .landing-feature-grid article:hover h3 {
+  color: #8b5cf6 !important;
+}
+
+/* Orbit quote hover effect */
+.landing-quote {
+  transition: transform 0.3s ease, box-shadow 0.3s ease,
+    border-color 0.3s ease;
+  border-radius: 20px;
+}
+
+.landing-quote:hover {
+  transform: translateY(-5px);
+  border-color: #a98aff;
+  box-shadow: 0 12px 35px rgba(139, 92, 246, 0.2);
+}
+
+.landing-quote h2 {
+  transition: color 0.3s ease, text-shadow 0.3s ease;
+}
+
+.landing-quote:hover h2 {
+  color: #c5ff72;
+  text-shadow: 0 0 18px rgba(197, 255, 114, 0.15);
+}
+
+/* Quote section - Light mode readability */
+.landing.light-mode .landing-quote {
+  background: linear-gradient(135deg, #ffffff, #f0e9ff);
+  border: 1px solid #dfd0ff;
+  box-shadow: 0 12px 35px rgba(105, 70, 170, 0.08);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.landing.light-mode .landing-quote h2 {
+  color: #30204f;
+  text-shadow: none;
+  transition: color 0.3s ease;
+}
+
+.landing.light-mode .landing-quote p {
+  color: #665779;
+}
+
+.landing.light-mode .landing-quote:hover {
+  transform: translateY(-5px);
+  border-color: #b69aff;
+  box-shadow: 0 18px 40px rgba(105, 70, 170, 0.16);
+}
+
+.landing.light-mode .landing-quote:hover h2 {
+  color: #7956c8;
+}
+
+/* Light mode: make Explore Orbit clearly visible */
+.landing.light-mode .landing-actions a {
+  color: #7956c8 !important;
+  opacity: 1 !important;
+  font-weight: 600;
+  transition: color 0.25s ease, transform 0.25s ease;
+}
+
+.landing.light-mode .landing-actions a:hover {
+  color: #a044d5 !important;
+  transform: translateY(-2px);
+}
+
+/* Colorful Orbit planet */
+.landing .orbit-planet {
+  position: relative;
+  width: 150px;
+  height: 150px;
+  margin: 25px auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  isolation: isolate;
+}
+
+/* Glowing purple planet */
+.landing .orbit-planet::before {
+  content: '';
+  width: 65px;
+  height: 65px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at 30% 25%,
+    #f0d9ff 0%,
+    #b47aff 25%,
+    #7941e8 58%,
+    #4920a8 100%
+  );
+  box-shadow:
+    0 0 18px rgba(151, 83, 255, 0.45),
+    0 0 45px rgba(151, 83, 255, 0.22),
+    inset -8px -8px 15px rgba(45, 13, 115, 0.4);
+  z-index: 2;
+}
+
+/* Colorful orbit rings */
+.landing .orbit-planet::after {
+  content: '';
+  position: absolute;
+  inset: 22px -15px;
+  border: 2px solid #c58bff;
+  border-radius: 50%;
+  transform: rotate(-28deg) scaleY(0.48);
+  box-shadow: 0 0 12px rgba(197, 139, 255, 0.2);
+  z-index: 3;
+}
+
+/* Soft colorful glow behind the planet */
+.landing.light-mode .orbit-planet {
+  filter: drop-shadow(0 12px 18px rgba(132, 78, 230, 0.18));
+}
+
+/* Orbit: colorful animated planet */
+.landing .orbit-ring {
+  border-color: transparent !important;
+  opacity: 1 !important;
+}
+
+/* Purple orbit */
+.landing .ring-one {
+  border: 2px solid #c77dff !important;
+  box-shadow: 0 0 12px rgba(199, 125, 255, 0.35);
+}
+
+/* Neon lime orbit */
+.landing .ring-two {
+  border: 2px solid #b8ff55 !important;
+  box-shadow: 0 0 12px rgba(184, 255, 85, 0.3);
+}
+
+/* Pink orbit */
+.landing .ring-three {
+  border: 2px solid #ff75d8 !important;
+  box-shadow: 0 0 12px rgba(255, 117, 216, 0.3);
+}
+
+/* Colorful glowing center */
+.landing .orbit-visual > span:not(.orbit-ring) {
+  background: radial-gradient(
+    circle at 30% 25%,
+    #ffe2ff 0%,
+    #c084fc 25%,
+    #8b5cf6 55%,
+    #5425b8 100%
+  );
+  box-shadow:
+    0 0 20px rgba(139, 92, 246, 0.65),
+    0 0 45px rgba(192, 132, 252, 0.3);
+}
+
+/* Brighter rings in light mode */
+.landing.light-mode .orbit-ring {
+  opacity: 1 !important;
+  filter: saturate(1.5);
+}
+
+/* Orbit animated cosmic background */
+.landing {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+}
+
+.landing::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(
+      ellipse at 18% 25%,
+      rgba(139, 92, 246, 0.20),
+      transparent 38%
+    ),
+    radial-gradient(
+      ellipse at 82% 38%,
+      rgba(236, 72, 153, 0.12),
+      transparent 35%
+    ),
+    radial-gradient(
+      ellipse at 50% 85%,
+      rgba(34, 211, 238, 0.09),
+      transparent 38%
+    );
+  background-size: 160% 160%;
+  animation: cosmicAurora 16s ease-in-out infinite alternate;
+}
+
+.landing::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0.35;
+  background-image:
+    radial-gradient(circle, #ffffff 1px, transparent 1.5px),
+    radial-gradient(circle, #c5ff72 1px, transparent 1.5px),
+    radial-gradient(circle, #c084fc 1px, transparent 1.5px);
+  background-size: 97px 113px, 173px 191px, 239px 211px;
+  background-position: 12px 20px, 70px 90px, 120px 45px;
+  animation: cosmicStars 35s linear infinite;
+}
+
+@keyframes cosmicAurora {
+  0% {
+    background-position: 0% 30%;
+    transform: scale(1);
+  }
+  50% {
+    background-position: 80% 60%;
+  }
+  100% {
+    background-position: 20% 100%;
+    transform: scale(1.06);
+  }
+}
+
+@keyframes cosmicStars {
+  from {
+    background-position: 12px 20px, 70px 90px, 120px 45px;
+  }
+  to {
+    background-position: 109px 133px, 243px 281px, 359px 256px;
+  }
+}
+
+/* Keep light mode soft and readable */
+.landing.light-mode::before {
+  opacity: 0.48;
+  background:
+    radial-gradient(
+      ellipse at 18% 25%,
+      rgba(167, 139, 250, 0.20),
+      transparent 38%
+    ),
+    radial-gradient(
+      ellipse at 82% 38%,
+      rgba(244, 114, 182, 0.12),
+      transparent 35%
+    ),
+    radial-gradient(
+      ellipse at 50% 85%,
+      rgba(129, 140, 248, 0.12),
+      transparent 38%
+    );
+}
+
+.landing.light-mode::after {
+  opacity: 0.22;
+  background-image:
+    radial-gradient(circle, #8b5cf6 1px, transparent 1.5px),
+    radial-gradient(circle, #ec4899 1px, transparent 1.5px),
+    radial-gradient(circle, #84cc16 1px, transparent 1.5px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .landing::before,
+  .landing::after {
+    animation: none;
+  }
+}
+
