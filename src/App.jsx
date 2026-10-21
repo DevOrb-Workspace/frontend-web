@@ -492,21 +492,30 @@ const [inviteSuccess, setInviteSuccess] = useState('')
     setEditingProject(null)
   }
 
-  function addTask() {
-    const title = prompt('Enter your new task:')
+  
+function addTask() {
+  const title = prompt('Enter your new task:')
+  if (!title?.trim()) return
 
-    if (!title?.trim()) return
+  const priority = prompt('Enter priority: Low, Medium, or High') || 'Medium'
+  const deadline = prompt('Enter deadline (YYYY-MM-DD), or leave empty:')
 
-    setTasks(previous => [
-      ...previous,
-      {
-        title: title.trim(),
-        project: 'General',
-        status: 'To Do',
-        color: 'purple'
-      }
-    ])
-  }
+  setTasks(previous => [
+    ...previous,
+    {
+      id: Date.now(),
+      title: title.trim(),
+      project: 'General',
+      status: 'To Do',
+      priority: ['Low', 'Medium', 'High'].includes(priority)
+        ? priority
+        : 'Medium',
+     deadline: (deadline || '').trim(),
+      color: 'purple'
+    }
+  ])
+}
+
 
   function toggleTask(title) {
     const nextStatus = {
@@ -1246,10 +1255,25 @@ function sendInvitation(event) {
                         {task.status === 'Completed' ? '✓' : ''}
                       </span>
 
-                      <span className="task-info">
-                        <strong>{task.title}</strong>
-                        <span>{task.project}</span>
-                      </span>
+                      
+<span className="task-info">
+  <strong>{task.title}</strong>
+  <span>{task.project}</span>
+
+  <span className="task-meta">
+    {task.priority && (
+      <span className={`task-priority priority-${task.priority.toLowerCase()}`}>
+        {task.priority} Priority
+      </span>
+    )}
+
+    {task.deadline && (
+      <span className="task-deadline">
+        Due: {task.deadline}
+      </span>
+    )}
+  </span>
+</span>
 
                       <span className={`task-status ${task.color}`}>
                         {task.status}
