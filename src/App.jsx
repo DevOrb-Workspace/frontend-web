@@ -282,6 +282,13 @@ function App() {
   const [activePage, setActivePage] = useState('overview')
 
   const [showProjectModal, setShowProjectModal] = useState(false)
+const [showInviteModal, setShowInviteModal] = useState(false)
+const [inviteEmail, setInviteEmail] = useState('')
+const [inviteRole, setInviteRole] = useState('developer')
+const [invitedMembers, setInvitedMembers] = useState([])
+const [inviteError, setInviteError] = useState('')
+const [inviteSuccess, setInviteSuccess] = useState('')
+
   const [editingProject, setEditingProject] = useState(null)
   const [projectName, setProjectName] = useState('')
   const [projectDescription, setProjectDescription] = useState('')
@@ -520,19 +527,40 @@ function App() {
     )
   }
 
-  function inviteTeam() {
-    const email = prompt('Enter your teammate’s email address:')
+  
+function inviteTeam() {
+  setInviteEmail('')
+  setInviteRole('developer')
+  setInviteError('')
+  setInviteSuccess('')
+  setShowInviteModal(true)
+}
 
-    if (!email) return
+function sendInvitation(event) {
+  event.preventDefault()
 
-    if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
-      alert(
-        `Invitation prepared for ${email.trim()}. Connect a backend to send it.`
-      )
-    } else {
-      alert('Please enter a valid email address.')
-    }
+  const email = inviteEmail.trim().toLowerCase()
+
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    setInviteError('Please enter a valid email address.')
+    return
   }
+
+  if (invitedMembers.some(member => member.email === email)) {
+    setInviteError('This teammate has already been added.')
+    return
+  }
+
+  setInvitedMembers(previous => [
+    ...previous,
+    { email, role: inviteRole, status: 'Pending' }
+  ])
+
+  setInviteError('')
+  setInviteSuccess(`Invitation prepared for ${email}.`)
+  setInviteEmail('')
+}
+
 
   function sendMessage(event) {
     event.preventDefault()
@@ -558,33 +586,61 @@ function App() {
     setMessage('')
   }
 
+  
+
+
   if (!isLoggedIn) {
     return (
       <Login
         onLoginSuccess={user => {
-          setUserRole(user.role)
-          setUserEmail(user.email)
-          setIsLoggedIn(true)
+          setUserRole(user.role);
+          setUserEmail(user.email);
+          setIsLoggedIn(true);
+        }}
+        onPreviewDashboard={role => {
+          setUserRole(role);
+          setUserEmail('preview@orbit.local');
+          setActivePage('overview');
+          setIsLoggedIn(true);
         }}
       />
-    )
+    );
   }
+
+  
 
   return (
     <div
       className={`app ${dark ? 'dark' : 'light'} role-${userRole}`}
       id="home"
     >
-      <div className="decor decor-top">✦</div>
-      <div className="decor decor-bottom">✳</div>
-      <div className="decor decor-side">✦</div>
+      <div className="decor decor-top">✧</div>
+<div className="decor decor-bottom">·</div>
+<div className="decor decor-side">✧</div>
 
       <main className="dashboard-shell">
         <aside className="sidebar">
-          <a className="brand" href="#home">
-            <span className="brand-icon">✳</span>
-            orbit<span className="brand-dot">.</span>
-          </a>
+          
+<a className="brand" href="#home">
+  <span className="brand-icon" aria-hidden="true">
+    <svg viewBox="0 0 48 48">
+      <ellipse
+        cx="24"
+        cy="24"
+        rx="21"
+        ry="9"
+        transform="rotate(-30 24 24)"
+        fill="none"
+        stroke="#C4B5FD"
+        strokeWidth="3"
+      />
+      <circle cx="24" cy="24" r="10" fill="#8B5CF6" />
+      <circle cx="20" cy="20" r="3" fill="#E9D5FF" />
+    </svg>
+  </span>
+  orbit<span className="brand-dot">.</span>
+</a>
+
 
           <p className="menu-label">YOUR WORKSPACE</p>
 
@@ -780,10 +836,49 @@ function App() {
 
                 <div className="hero-art" aria-hidden="true">
                   <span className="hero-spark spark-one">✦</span>
-                  <span className="hero-spark spark-two">✳</span>
+                <span className="hero-spark spark-two">✧</span>
                   <div className="hero-orbit orbit-one" />
                   <div className="hero-orbit orbit-two" />
-                  <div className="hero-orbit-core">✳</div>
+                 
+<div className="hero-orbit-core" aria-hidden="true">
+  <svg viewBox="0 0 100 100" className="hero-network-icon">
+    {/* Connecting lines */}
+    <g
+      stroke="#C4B5FD"
+      strokeWidth="2"
+      strokeOpacity="0.8"
+      fill="none"
+    >
+      <path d="M50 50 L22 25" />
+      <path d="M50 50 L78 23" />
+      <path d="M50 50 L80 72" />
+      <path d="M50 50 L22 77" />
+      <path d="M22 25 L78 23" strokeOpacity="0.35" />
+      <path d="M22 77 L80 72" strokeOpacity="0.35" />
+    </g>
+
+    {/* Center node */}
+    <path
+      d="M50 36 L64 50 L50 64 L36 50 Z"
+      fill="#A78BFA"
+      stroke="#E9D5FF"
+      strokeWidth="2"
+    />
+
+    {/* Connected team nodes */}
+    <circle cx="22" cy="25" r="7" fill="#F472B6" />
+    <circle cx="78" cy="23" r="7" fill="#67E8F9" />
+    <circle cx="80" cy="72" r="7" fill="#C4B5FD" />
+    <circle cx="22" cy="77" r="7" fill="#F9A8D4" />
+
+    {/* Tiny highlights */}
+    <circle cx="22" cy="25" r="2" fill="#FFFFFF" />
+    <circle cx="78" cy="23" r="2" fill="#FFFFFF" />
+    <circle cx="80" cy="72" r="2" fill="#FFFFFF" />
+    <circle cx="22" cy="77" r="2" fill="#FFFFFF" />
+  </svg>
+</div>
+
                   <span className="hero-note note-one">
                     {currentHero.note1}
                   </span>
@@ -1266,21 +1361,45 @@ function App() {
                   required
                 />
 
-                <label htmlFor="project-color">
-                  Project Color
-                </label>
+               
+<label>Project Color</label>
 
-                <select
-                  id="project-color"
-                  value={projectColor}
-                  onChange={event =>
-                    setProjectColor(event.target.value)
-                  }
-                >
-                  <option value="purple">Purple</option>
-                  <option value="lime">Lime</option>
-                  <option value="coral">Coral</option>
-                </select>
+<div className="project-color-palette">
+  {[
+    { name: 'purple', hex: '#8B5CF6' },
+    { name: 'pink', hex: '#EC4899' },
+    { name: 'cyan', hex: '#06B6D4' },
+    { name: 'blue', hex: '#3B82F6' },
+    { name: 'lime', hex: '#84CC16' },
+    { name: 'coral', hex: '#F97373' },
+    { name: 'orange', hex: '#F97316' },
+    { name: 'indigo', hex: '#6366F1' },
+    { name: 'mint', hex: '#10B981' },
+    { name: 'lavender', hex: '#C4B5FD' },
+    { name: 'red', hex: '#EF4444' },
+    { name: 'slate', hex: '#64748B' }
+  ].map(color => (
+    <button
+      key={color.name}
+      type="button"
+      className={`project-color-swatch ${
+        projectColor === color.name ? 'selected' : ''
+      }`}
+      style={{ '--swatch-color': color.hex }}
+      onClick={() => setProjectColor(color.name)}
+      title={color.name}
+      aria-label={`Select ${color.name}`}
+      aria-pressed={projectColor === color.name}
+    >
+      {projectColor === color.name && '✓'}
+    </button>
+  ))}
+</div>
+
+<p className="selected-color-label">
+  Selected: {projectColor.charAt(0).toUpperCase() + projectColor.slice(1)}
+</p>
+ 
 
                 <div className="project-form-actions">
                   <button
@@ -1307,6 +1426,95 @@ function App() {
             </div>
           </div>
         )}
+
+{showInviteModal && (
+  <div className="project-modal-backdrop">
+    <div className="project-modal invite-modal">
+      <div className="project-modal-header">
+        <div>
+          <h2>Bring your team together ✨</h2>
+          <p>Invite someone to collaborate in Orbit.</p>
+        </div>
+
+        <button
+          type="button"
+          className="modal-close"
+          onClick={() => setShowInviteModal(false)}
+          aria-label="Close invitation form"
+        >
+          ×
+        </button>
+      </div>
+
+      <form className="project-form" onSubmit={sendInvitation}>
+        <label htmlFor="invite-email">Teammate's email *</label>
+
+        <input
+          id="invite-email"
+          type="email"
+          placeholder="teammate@example.com"
+          value={inviteEmail}
+          onChange={event => setInviteEmail(event.target.value)}
+          required
+        />
+
+        <label htmlFor="invite-role">Choose their role</label>
+
+        <select
+          id="invite-role"
+          value={inviteRole}
+          onChange={event => setInviteRole(event.target.value)}
+        >
+          <option value="developer">Developer</option>
+          <option value="product-manager">Product Manager</option>
+          <option value="senior-manager">Senior Manager</option>
+        </select>
+
+        {inviteError && (
+          <p className="invite-error">{inviteError}</p>
+        )}
+
+        {inviteSuccess && (
+          <p className="invite-success">{inviteSuccess}</p>
+        )}
+
+        <div className="project-form-actions">
+          <button
+            type="button"
+            className="cancel-project-btn"
+            onClick={() => setShowInviteModal(false)}
+          >
+            Close
+          </button>
+
+          <button type="submit" className="create-project-btn">
+            + Add teammate
+          </button>
+        </div>
+      </form>
+
+      {invitedMembers.length > 0 && (
+        <div className="invited-members">
+          <h3>Invited teammates</h3>
+
+          {invitedMembers.map(member => (
+            <div className="invited-member" key={member.email}>
+              <div>
+                <strong>{member.email}</strong>
+                <span>{member.role.replace('-', ' ')}</span>
+              </div>
+
+              <span className="invite-pending">
+                {member.status}
+              </span>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  </div>
+)}
+
       </main>
     </div>
   )

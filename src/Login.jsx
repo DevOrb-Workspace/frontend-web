@@ -60,41 +60,73 @@ function OrbitArt() {
   );
 }
 
+
 function OrbitMark() {
   return (
-    <svg className="orbit-mark" viewBox="0 0 48 48" aria-hidden="true">
-      <g
+    <svg
+      className="orbit-mark"
+      viewBox="0 0 48 48"
+      aria-hidden="true"
+    >
+      {/* Planet orbit ring */}
+      <ellipse
+        cx="24"
+        cy="24"
+        rx="21"
+        ry="9"
+        transform="rotate(-30 24 24)"
         fill="none"
-        stroke="currentColor"
-        strokeWidth="2.8"
-        strokeLinecap="round"
-      >
-        <ellipse cx="24" cy="24" rx="20" ry="8" transform="rotate(-35 24 24)" />
-        <ellipse cx="24" cy="24" rx="8" ry="20" transform="rotate(35 24 24)" />
-      </g>
+        stroke="#C4B5FD"
+        strokeWidth="2.5"
+      />
 
-      <circle cx="8" cy="31" r="3.5" fill="#38BDF8" />
-      <circle cx="37" cy="12" r="3.5" fill="#E879F9" />
-      <circle cx="32" cy="39" r="3" fill="#A78BFA" />
+      {/* Planet */}
+      <circle
+        cx="24"
+        cy="24"
+        r="10"
+        fill="#8B5CF6"
+      />
+
+      {/* Planet highlight */}
+      <path
+        d="M19 19 Q23 15 28 19"
+        fill="none"
+        stroke="#E9D5FF"
+        strokeWidth="2"
+        strokeLinecap="round"
+      />
+
+      {/* Orbit accent */}
+      <circle cx="7" cy="33" r="3.5" fill="#38BDF8" />
+      <circle cx="39" cy="13" r="3.5" fill="#E879F9" />
     </svg>
   );
 }
 
-export default function Login({ onLoginSuccess, onForgotPassword }) {
+
+export default function Login({
+  onLoginSuccess,
+  onForgotPassword,
+  onPreviewDashboard
+}) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [role, setRole] = useState('developer');
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-const handleGithubLogin = () => {
-  window.location.href =
-    'https://backend-core-iwxv.onrender.com/api/auth/oauth/github';
-};
 
-const handleGoogleLogin = () => {
-  window.location.href =
-    'https://backend-core-iwxv.onrender.com/api/auth/oauth/google';
-};
+  const handleGithubLogin = () => {
+    window.location.href =
+      'https://backend-core-iwxv.onrender.com/api/auth/oauth/github';
+  };
+
+  const handleGoogleLogin = () => {
+    window.location.href =
+      'https://backend-core-iwxv.onrender.com/api/auth/oauth/google';
+  };
+
   async function handleLogin(event) {
     event.preventDefault();
     setError('');
@@ -140,15 +172,15 @@ const handleGoogleLogin = () => {
         return;
       }
 
+      // The backend role determines dashboard access.
+      // The dropdown is for display/selection only.
       onLoginSuccess?.({
         email: user.email || email.trim(),
         role: mappedRole,
         user,
       });
     } catch (err) {
-      setError(
-        err.message || 'Unable to sign in. Please try again.'
-      );
+      setError(err.message || 'Unable to sign in. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -182,7 +214,7 @@ const handleGoogleLogin = () => {
         <OrbitArt />
 
         <div className="orbit-benefits">
-          <div><span>✳</span> Work together</div>
+         <div><span>◉</span> Work together</div>
           <div><span>↗</span> Stay productive</div>
           <div><span>✧</span> Build the future</div>
         </div>
@@ -242,20 +274,34 @@ const handleGoogleLogin = () => {
             </button>
           </div>
 
-         <div className="orbit-login-options">
-  <label className="orbit-remember">
-    <input type="checkbox" />
-    <span>Remember me</span>
-  </label>
+          <label htmlFor="orbit-role">Select your role</label>
 
-  <button
-    type="button"
-    className="orbit-forgot-password"
-    onClick={() => onForgotPassword?.()}
-  >
-    Forgot password?
-  </button>
-</div>
+          <div className="orbit-input-wrap orbit-role-wrap">
+            <select
+              id="orbit-role"
+              value={role}
+              onChange={(event) => setRole(event.target.value)}
+            >
+              <option value="developer">Developer</option>
+              <option value="product-manager">Product Manager</option>
+              <option value="senior-manager">Senior Manager</option>
+            </select>
+          </div>
+
+          <div className="orbit-login-options">
+            <label className="orbit-remember">
+              <input type="checkbox" />
+              <span>Remember me</span>
+            </label>
+
+            <button
+              type="button"
+              className="orbit-forgot-password"
+              onClick={() => onForgotPassword?.()}
+            >
+              Forgot password?
+            </button>
+          </div>
 
           {error && (
             <p className="orbit-login-error" role="alert">
@@ -263,37 +309,43 @@ const handleGoogleLogin = () => {
             </p>
           )}
 
-          <button
-            className="orbit-submit"
-            type="submit"
-            disabled={loading}
-          >
+          <button className="orbit-submit" type="submit" disabled={loading}>
             {loading ? 'Signing in...' : 'Sign in'}
             {!loading && <span aria-hidden="true"> →</span>}
           </button>
-<div className="orbit-divider">
-  <span>or continue with</span>
-</div>
-
-<div className="orbit-social-buttons">
+{import.meta.env.DEV && (
   <button
     type="button"
-    className="orbit-social-button"
-    onClick={handleGoogleLogin}
+    className="orbit-preview-button"
+    onClick={() => onPreviewDashboard?.(role)}
   >
-    <FcGoogle className="social-logo" aria-hidden="true" />
-    <span>Google</span>
+    Preview Dashboard →
   </button>
+)}
+          <div className="orbit-divider">
+            <span>or continue with</span>
+          </div>
 
-  <button
-    type="button"
-    className="orbit-social-button"
-    onClick={handleGithubLogin}
-  >
-    <FaGithub className="social-logo github-logo" aria-hidden="true" />
-    <span>GitHub</span>
-  </button>
-</div>
+          <div className="orbit-social-buttons">
+            <button
+              type="button"
+              className="orbit-social-button"
+              onClick={handleGoogleLogin}
+            >
+              <FcGoogle className="social-logo" aria-hidden="true" />
+              <span>Google</span>
+            </button>
+
+            <button
+              type="button"
+              className="orbit-social-button"
+              onClick={handleGithubLogin}
+            >
+              <FaGithub className="social-logo github-logo" aria-hidden="true" />
+              <span>GitHub</span>
+            </button>
+          </div>
+
           <p className="orbit-login-footer">
             Your team workspace, all in one place.
           </p>
