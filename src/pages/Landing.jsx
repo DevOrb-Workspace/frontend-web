@@ -71,31 +71,38 @@ export default function Landing({ onGetStarted }) {
       </nav>
 
       <section className="landing-hero" id="home">
-        <span className="landing-eyebrow">
-          A BETTER WAY TO BUILD TOGETHER
-        </span>
-
-        <h1>
-          Big ideas deserve
-          <br />
-          <span className="typing-text">
-            {typedText}
-            <span className="typing-cursor">|</span>
+        <div className="landing-hero-content">
+          <span className="landing-eyebrow">
+            A BETTER WAY TO BUILD TOGETHER
           </span>
-        </h1>
 
-        <p>
-          Projects, conversations and ideas — all moving
-          in the same direction. Bring your team together
-          and turn your next big idea into progress.
-        </p>
+          <h1>
+            Big <span className="pixel-word">ideas</span> deserve
+            <br />
+            <span className="typing-text">
+              {typedText}
+              <span className="typing-cursor">|</span>
+            </span>
+          </h1>
 
-        <div className="landing-actions">
-          <button onClick={onGetStarted}>
-            Get started for free ↗
-          </button>
+          <p>
+            Projects, conversations and ideas — all moving
+            in the same direction. Bring your team together
+            and turn your next big idea into progress.
+          </p>
 
-          <a href="#features">Explore Orbit ↓</a>
+          <div className="landing-actions">
+            <button onClick={onGetStarted}>
+              Get started for free ↗
+            </button>
+
+            <a href="#features">Explore Orbit ↓</a>
+          </div>
+        </div>
+
+        <div className="landing-robot-space">
+          <div className="robot-glow"></div>
+          <div className="robot-placeholder">ORBIT</div>
         </div>
 
         <div className="landing-orbit-art" aria-hidden="true">

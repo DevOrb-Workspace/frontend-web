@@ -16,6 +16,7 @@ import { useEffect, useState } from 'react'
 import './Analytics.css'
 import './App.css'
 import Login from './Login'
+import Landing from './pages/Landing'
 
 const initialProjects = [
   {
@@ -272,9 +273,13 @@ function AnalyticsPage({ projects, tasks, onBack }) {
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false)
+  const [showLanding, setShowLanding] = useState(true)
   const [userRole, setUserRole] = useState('developer')
   const [userEmail, setUserEmail] = useState('')
-
+  const [showTaskModal, setShowTaskModal] = useState(false)
+  const [newTaskTitle, setNewTaskTitle] = useState('')
+  const [newTaskPriority, setNewTaskPriority] = useState('Medium')
+  const [newTaskDeadline, setNewTaskDeadline] = useState('')
   const [dark, setDark] = useState(
     () => localStorage.getItem('team-theme') === 'dark'
   )
@@ -282,12 +287,12 @@ function App() {
   const [activePage, setActivePage] = useState('overview')
 
   const [showProjectModal, setShowProjectModal] = useState(false)
-const [showInviteModal, setShowInviteModal] = useState(false)
-const [inviteEmail, setInviteEmail] = useState('')
-const [inviteRole, setInviteRole] = useState('developer')
-const [invitedMembers, setInvitedMembers] = useState([])
-const [inviteError, setInviteError] = useState('')
-const [inviteSuccess, setInviteSuccess] = useState('')
+  const [showInviteModal, setShowInviteModal] = useState(false)
+  const [inviteEmail, setInviteEmail] = useState('')
+  const [inviteRole, setInviteRole] = useState('developer')
+  const [invitedMembers, setInvitedMembers] = useState([])
+  const [inviteError, setInviteError] = useState('')
+  const [inviteSuccess, setInviteSuccess] = useState('')
 
   const [editingProject, setEditingProject] = useState(null)
   const [projectName, setProjectName] = useState('')
@@ -466,12 +471,12 @@ const [inviteSuccess, setInviteSuccess] = useState('')
       previous.map(project =>
         project.name === oldName
           ? {
-              ...project,
-              name: newName,
-              description: projectDescription.trim(),
-              team: teamName.trim(),
-              color: projectColor
-            }
+            ...project,
+            name: newName,
+            description: projectDescription.trim(),
+            team: teamName.trim(),
+            color: projectColor
+          }
           : project
       )
     )
@@ -480,10 +485,10 @@ const [inviteSuccess, setInviteSuccess] = useState('')
       previous.map(task =>
         task.project === oldName
           ? {
-              ...task,
-              project: newName,
-              color: projectColor
-            }
+            ...task,
+            project: newName,
+            color: projectColor
+          }
           : task
       )
     )
@@ -492,31 +497,30 @@ const [inviteSuccess, setInviteSuccess] = useState('')
     setEditingProject(null)
   }
 
-  
 function addTask() {
-  const title = prompt('Enter your new task:')
-  if (!title?.trim()) return
-
-  const priority = prompt('Enter priority: Low, Medium, or High') || 'Medium'
-  const deadline = prompt('Enter deadline (YYYY-MM-DD), or leave empty:')
+  if (!newTaskTitle.trim()) return
 
   setTasks(previous => [
     ...previous,
     {
       id: Date.now(),
-      title: title.trim(),
+      title: newTaskTitle.trim(),
       project: 'General',
       status: 'To Do',
-      priority: ['Low', 'Medium', 'High'].includes(priority)
-        ? priority
-        : 'Medium',
-     deadline: (deadline || '').trim(),
+      priority: newTaskPriority,
+      deadline: newTaskDeadline,
       color: 'purple'
     }
   ])
+
+  setNewTaskTitle('')
+  setNewTaskPriority('Medium')
+  setNewTaskDeadline('')
+  setShowTaskModal(false)
 }
 
 
+  
   function toggleTask(title) {
     const nextStatus = {
       'To Do': 'In Progress',
@@ -528,47 +532,47 @@ function addTask() {
       previous.map(task =>
         task.title === title
           ? {
-              ...task,
-              status: nextStatus[task.status] || 'To Do'
-            }
+            ...task,
+            status: nextStatus[task.status] || 'To Do'
+          }
           : task
       )
     )
   }
 
-  
-function inviteTeam() {
-  setInviteEmail('')
-  setInviteRole('developer')
-  setInviteError('')
-  setInviteSuccess('')
-  setShowInviteModal(true)
-}
 
-function sendInvitation(event) {
-  event.preventDefault()
-
-  const email = inviteEmail.trim().toLowerCase()
-
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-    setInviteError('Please enter a valid email address.')
-    return
+  function inviteTeam() {
+    setInviteEmail('')
+    setInviteRole('developer')
+    setInviteError('')
+    setInviteSuccess('')
+    setShowInviteModal(true)
   }
 
-  if (invitedMembers.some(member => member.email === email)) {
-    setInviteError('This teammate has already been added.')
-    return
+  function sendInvitation(event) {
+    event.preventDefault()
+
+    const email = inviteEmail.trim().toLowerCase()
+
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      setInviteError('Please enter a valid email address.')
+      return
+    }
+
+    if (invitedMembers.some(member => member.email === email)) {
+      setInviteError('This teammate has already been added.')
+      return
+    }
+
+    setInvitedMembers(previous => [
+      ...previous,
+      { email, role: inviteRole, status: 'Pending' }
+    ])
+
+    setInviteError('')
+    setInviteSuccess(`Invitation prepared for ${email}.`)
+    setInviteEmail('')
   }
-
-  setInvitedMembers(previous => [
-    ...previous,
-    { email, role: inviteRole, status: 'Pending' }
-  ])
-
-  setInviteError('')
-  setInviteSuccess(`Invitation prepared for ${email}.`)
-  setInviteEmail('')
-}
 
 
   function sendMessage(event) {
@@ -595,69 +599,71 @@ function sendInvitation(event) {
     setMessage('')
   }
 
-  
-
+  if (!isLoggedIn && showLanding) {
+    return (
+      <Landing
+        onGetStarted={() => setShowLanding(false)}
+      />
+    )
+  }
 
   if (!isLoggedIn) {
     return (
       <Login
         onLoginSuccess={user => {
-          setUserRole(user.role);
-          setUserEmail(user.email);
-          setIsLoggedIn(true);
+          setUserRole(user.role)
+          setUserEmail(user.email)
+          setIsLoggedIn(true)
         }}
         onPreviewDashboard={role => {
-          setUserRole(role);
-          setUserEmail('preview@orbit.local');
-          setActivePage('overview');
-          setIsLoggedIn(true);
+          setUserRole(role)
+          setUserEmail('preview@orbit.local')
+          setActivePage('overview')
+          setIsLoggedIn(true)
         }}
       />
-    );
+    )
   }
 
-  
-
-  return (
+return (
     <div
       className={`app ${dark ? 'dark' : 'light'} role-${userRole}`}
       id="home"
     >
       <div className="decor decor-top">✧</div>
-<div className="decor decor-bottom">·</div>
-<div className="decor decor-side">✧</div>
+      <div className="decor decor-bottom">·</div>
+      <div className="decor decor-side">✧</div>
 
       <main className="dashboard-shell">
         <aside className="sidebar">
-          
-<a className="brand" href="#home">
-  <span className="brand-icon" aria-hidden="true">
-    <svg viewBox="0 0 48 48">
-      <ellipse
-        cx="24"
-        cy="24"
-        rx="21"
-        ry="9"
-        transform="rotate(-30 24 24)"
-        fill="none"
-        stroke="#C4B5FD"
-        strokeWidth="3"
-      />
-      <circle cx="24" cy="24" r="10" fill="#8B5CF6" />
-      <circle cx="20" cy="20" r="3" fill="#E9D5FF" />
-    </svg>
-  </span>
-  orbit<span className="brand-dot">.</span>
-</a>
+
+          <a className="brand" href="#home">
+            <span className="brand-icon" aria-hidden="true">
+              <svg viewBox="0 0 48 48">
+                <ellipse
+                  cx="24"
+                  cy="24"
+                  rx="21"
+                  ry="9"
+                  transform="rotate(-30 24 24)"
+                  fill="none"
+                  stroke="#C4B5FD"
+                  strokeWidth="3"
+                />
+                <circle cx="24" cy="24" r="10" fill="#8B5CF6" />
+                <circle cx="20" cy="20" r="3" fill="#E9D5FF" />
+              </svg>
+            </span>
+            orbit<span className="brand-dot">.</span>
+          </a>
 
 
           <p className="menu-label">YOUR WORKSPACE</p>
 
           <nav className="navigation">
             <a
-              className={`nav-item ${
-                activePage === 'overview' ? 'active' : ''
-              }`}
+              className={`nav-item ${activePage === 'overview' ? 'active' : ''
+                }`}
               href="#home"
               onClick={() => setActivePage('overview')}
             >
@@ -703,9 +709,8 @@ function sendInvitation(event) {
 
             {userRole === 'senior-manager' && (
               <button
-                className={`nav-item ${
-                  activePage === 'analytics' ? 'active' : ''
-                }`}
+                className={`nav-item ${activePage === 'analytics' ? 'active' : ''
+                  }`}
                 onClick={() => setActivePage('analytics')}
               >
                 <span>◷</span> Executive Analytics
@@ -723,9 +728,8 @@ function sendInvitation(event) {
 
             {userRole !== 'senior-manager' && (
               <button
-                className={`nav-item ${
-                  activePage === 'analytics' ? 'active' : ''
-                }`}
+                className={`nav-item ${activePage === 'analytics' ? 'active' : ''
+                  }`}
                 onClick={() => setActivePage('analytics')}
               >
                 <span>◷</span> Analytics
@@ -845,48 +849,48 @@ function sendInvitation(event) {
 
                 <div className="hero-art" aria-hidden="true">
                   <span className="hero-spark spark-one">✦</span>
-                <span className="hero-spark spark-two">✧</span>
+                  <span className="hero-spark spark-two">✧</span>
                   <div className="hero-orbit orbit-one" />
                   <div className="hero-orbit orbit-two" />
-                 
-<div className="hero-orbit-core" aria-hidden="true">
-  <svg viewBox="0 0 100 100" className="hero-network-icon">
-    {/* Connecting lines */}
-    <g
-      stroke="#C4B5FD"
-      strokeWidth="2"
-      strokeOpacity="0.8"
-      fill="none"
-    >
-      <path d="M50 50 L22 25" />
-      <path d="M50 50 L78 23" />
-      <path d="M50 50 L80 72" />
-      <path d="M50 50 L22 77" />
-      <path d="M22 25 L78 23" strokeOpacity="0.35" />
-      <path d="M22 77 L80 72" strokeOpacity="0.35" />
-    </g>
 
-    {/* Center node */}
-    <path
-      d="M50 36 L64 50 L50 64 L36 50 Z"
-      fill="#A78BFA"
-      stroke="#E9D5FF"
-      strokeWidth="2"
-    />
+                  <div className="hero-orbit-core" aria-hidden="true">
+                    <svg viewBox="0 0 100 100" className="hero-network-icon">
+                      {/* Connecting lines */}
+                      <g
+                        stroke="#C4B5FD"
+                        strokeWidth="2"
+                        strokeOpacity="0.8"
+                        fill="none"
+                      >
+                        <path d="M50 50 L22 25" />
+                        <path d="M50 50 L78 23" />
+                        <path d="M50 50 L80 72" />
+                        <path d="M50 50 L22 77" />
+                        <path d="M22 25 L78 23" strokeOpacity="0.35" />
+                        <path d="M22 77 L80 72" strokeOpacity="0.35" />
+                      </g>
 
-    {/* Connected team nodes */}
-    <circle cx="22" cy="25" r="7" fill="#F472B6" />
-    <circle cx="78" cy="23" r="7" fill="#67E8F9" />
-    <circle cx="80" cy="72" r="7" fill="#C4B5FD" />
-    <circle cx="22" cy="77" r="7" fill="#F9A8D4" />
+                      {/* Center node */}
+                      <path
+                        d="M50 36 L64 50 L50 64 L36 50 Z"
+                        fill="#A78BFA"
+                        stroke="#E9D5FF"
+                        strokeWidth="2"
+                      />
 
-    {/* Tiny highlights */}
-    <circle cx="22" cy="25" r="2" fill="#FFFFFF" />
-    <circle cx="78" cy="23" r="2" fill="#FFFFFF" />
-    <circle cx="80" cy="72" r="2" fill="#FFFFFF" />
-    <circle cx="22" cy="77" r="2" fill="#FFFFFF" />
-  </svg>
-</div>
+                      {/* Connected team nodes */}
+                      <circle cx="22" cy="25" r="7" fill="#F472B6" />
+                      <circle cx="78" cy="23" r="7" fill="#67E8F9" />
+                      <circle cx="80" cy="72" r="7" fill="#C4B5FD" />
+                      <circle cx="22" cy="77" r="7" fill="#F9A8D4" />
+
+                      {/* Tiny highlights */}
+                      <circle cx="22" cy="25" r="2" fill="#FFFFFF" />
+                      <circle cx="78" cy="23" r="2" fill="#FFFFFF" />
+                      <circle cx="80" cy="72" r="2" fill="#FFFFFF" />
+                      <circle cx="22" cy="77" r="2" fill="#FFFFFF" />
+                    </svg>
+                  </div>
 
                   <span className="hero-note note-one">
                     {currentHero.note1}
@@ -1094,9 +1098,8 @@ function sendInvitation(event) {
                         <button
                           key={channel}
                           type="button"
-                          className={`channel ${
-                            activeChannel === channel ? 'active' : ''
-                          }`}
+                          className={`channel ${activeChannel === channel ? 'active' : ''
+                            }`}
                           onClick={() => setActiveChannel(channel)}
                         >
                           {channel}
@@ -1248,32 +1251,31 @@ function sendInvitation(event) {
                       title="Click to change task status"
                     >
                       <span
-                        className={`task-check ${
-                          task.status === 'Completed' ? 'checked' : ''
-                        }`}
+                        className={`task-check ${task.status === 'Completed' ? 'checked' : ''
+                          }`}
                       >
                         {task.status === 'Completed' ? '✓' : ''}
                       </span>
 
-                      
-<span className="task-info">
-  <strong>{task.title}</strong>
-  <span>{task.project}</span>
 
-  <span className="task-meta">
-    {task.priority && (
-      <span className={`task-priority priority-${task.priority.toLowerCase()}`}>
-        {task.priority} Priority
-      </span>
-    )}
+                      <span className="task-info">
+                        <strong>{task.title}</strong>
+                        <span>{task.project}</span>
 
-    {task.deadline && (
-      <span className="task-deadline">
-        Due: {task.deadline}
-      </span>
-    )}
-  </span>
-</span>
+                        <span className="task-meta">
+                          {task.priority && (
+                            <span className={`task-priority priority-${task.priority.toLowerCase()}`}>
+                              {task.priority} Priority
+                            </span>
+                          )}
+
+                          {task.deadline && (
+                            <span className="task-deadline">
+                              Due: {task.deadline}
+                            </span>
+                          )}
+                        </span>
+                      </span>
 
                       <span className={`task-status ${task.color}`}>
                         {task.status}
@@ -1385,45 +1387,44 @@ function sendInvitation(event) {
                   required
                 />
 
-               
-<label>Project Color</label>
 
-<div className="project-color-palette">
-  {[
-    { name: 'purple', hex: '#8B5CF6' },
-    { name: 'pink', hex: '#EC4899' },
-    { name: 'cyan', hex: '#06B6D4' },
-    { name: 'blue', hex: '#3B82F6' },
-    { name: 'lime', hex: '#84CC16' },
-    { name: 'coral', hex: '#F97373' },
-    { name: 'orange', hex: '#F97316' },
-    { name: 'indigo', hex: '#6366F1' },
-    { name: 'mint', hex: '#10B981' },
-    { name: 'lavender', hex: '#C4B5FD' },
-    { name: 'red', hex: '#EF4444' },
-    { name: 'slate', hex: '#64748B' }
-  ].map(color => (
-    <button
-      key={color.name}
-      type="button"
-      className={`project-color-swatch ${
-        projectColor === color.name ? 'selected' : ''
-      }`}
-      style={{ '--swatch-color': color.hex }}
-      onClick={() => setProjectColor(color.name)}
-      title={color.name}
-      aria-label={`Select ${color.name}`}
-      aria-pressed={projectColor === color.name}
-    >
-      {projectColor === color.name && '✓'}
-    </button>
-  ))}
-</div>
+                <label>Project Color</label>
 
-<p className="selected-color-label">
-  Selected: {projectColor.charAt(0).toUpperCase() + projectColor.slice(1)}
-</p>
- 
+                <div className="project-color-palette">
+                  {[
+                    { name: 'purple', hex: '#8B5CF6' },
+                    { name: 'pink', hex: '#EC4899' },
+                    { name: 'cyan', hex: '#06B6D4' },
+                    { name: 'blue', hex: '#3B82F6' },
+                    { name: 'lime', hex: '#84CC16' },
+                    { name: 'coral', hex: '#F97373' },
+                    { name: 'orange', hex: '#F97316' },
+                    { name: 'indigo', hex: '#6366F1' },
+                    { name: 'mint', hex: '#10B981' },
+                    { name: 'lavender', hex: '#C4B5FD' },
+                    { name: 'red', hex: '#EF4444' },
+                    { name: 'slate', hex: '#64748B' }
+                  ].map(color => (
+                    <button
+                      key={color.name}
+                      type="button"
+                      className={`project-color-swatch ${projectColor === color.name ? 'selected' : ''
+                        }`}
+                      style={{ '--swatch-color': color.hex }}
+                      onClick={() => setProjectColor(color.name)}
+                      title={color.name}
+                      aria-label={`Select ${color.name}`}
+                      aria-pressed={projectColor === color.name}
+                    >
+                      {projectColor === color.name && '✓'}
+                    </button>
+                  ))}
+                </div>
+
+                <p className="selected-color-label">
+                  Selected: {projectColor.charAt(0).toUpperCase() + projectColor.slice(1)}
+                </p>
+
 
                 <div className="project-form-actions">
                   <button
@@ -1451,93 +1452,93 @@ function sendInvitation(event) {
           </div>
         )}
 
-{showInviteModal && (
-  <div className="project-modal-backdrop">
-    <div className="project-modal invite-modal">
-      <div className="project-modal-header">
-        <div>
-          <h2>Bring your team together ✨</h2>
-          <p>Invite someone to collaborate in Orbit.</p>
-        </div>
+        {showInviteModal && (
+          <div className="project-modal-backdrop">
+            <div className="project-modal invite-modal">
+              <div className="project-modal-header">
+                <div>
+                  <h2>Bring your team together ✨</h2>
+                  <p>Invite someone to collaborate in Orbit.</p>
+                </div>
 
-        <button
-          type="button"
-          className="modal-close"
-          onClick={() => setShowInviteModal(false)}
-          aria-label="Close invitation form"
-        >
-          ×
-        </button>
-      </div>
-
-      <form className="project-form" onSubmit={sendInvitation}>
-        <label htmlFor="invite-email">Teammate's email *</label>
-
-        <input
-          id="invite-email"
-          type="email"
-          placeholder="teammate@example.com"
-          value={inviteEmail}
-          onChange={event => setInviteEmail(event.target.value)}
-          required
-        />
-
-        <label htmlFor="invite-role">Choose their role</label>
-
-        <select
-          id="invite-role"
-          value={inviteRole}
-          onChange={event => setInviteRole(event.target.value)}
-        >
-          <option value="developer">Developer</option>
-          <option value="product-manager">Product Manager</option>
-          <option value="senior-manager">Senior Manager</option>
-        </select>
-
-        {inviteError && (
-          <p className="invite-error">{inviteError}</p>
-        )}
-
-        {inviteSuccess && (
-          <p className="invite-success">{inviteSuccess}</p>
-        )}
-
-        <div className="project-form-actions">
-          <button
-            type="button"
-            className="cancel-project-btn"
-            onClick={() => setShowInviteModal(false)}
-          >
-            Close
-          </button>
-
-          <button type="submit" className="create-project-btn">
-            + Add teammate
-          </button>
-        </div>
-      </form>
-
-      {invitedMembers.length > 0 && (
-        <div className="invited-members">
-          <h3>Invited teammates</h3>
-
-          {invitedMembers.map(member => (
-            <div className="invited-member" key={member.email}>
-              <div>
-                <strong>{member.email}</strong>
-                <span>{member.role.replace('-', ' ')}</span>
+                <button
+                  type="button"
+                  className="modal-close"
+                  onClick={() => setShowInviteModal(false)}
+                  aria-label="Close invitation form"
+                >
+                  ×
+                </button>
               </div>
 
-              <span className="invite-pending">
-                {member.status}
-              </span>
+              <form className="project-form" onSubmit={sendInvitation}>
+                <label htmlFor="invite-email">Teammate's email *</label>
+
+                <input
+                  id="invite-email"
+                  type="email"
+                  placeholder="teammate@example.com"
+                  value={inviteEmail}
+                  onChange={event => setInviteEmail(event.target.value)}
+                  required
+                />
+
+                <label htmlFor="invite-role">Choose their role</label>
+
+                <select
+                  id="invite-role"
+                  value={inviteRole}
+                  onChange={event => setInviteRole(event.target.value)}
+                >
+                  <option value="developer">Developer</option>
+                  <option value="product-manager">Product Manager</option>
+                  <option value="senior-manager">Senior Manager</option>
+                </select>
+
+                {inviteError && (
+                  <p className="invite-error">{inviteError}</p>
+                )}
+
+                {inviteSuccess && (
+                  <p className="invite-success">{inviteSuccess}</p>
+                )}
+
+                <div className="project-form-actions">
+                  <button
+                    type="button"
+                    className="cancel-project-btn"
+                    onClick={() => setShowInviteModal(false)}
+                  >
+                    Close
+                  </button>
+
+                  <button type="submit" className="create-project-btn">
+                    + Add teammate
+                  </button>
+                </div>
+              </form>
+
+              {invitedMembers.length > 0 && (
+                <div className="invited-members">
+                  <h3>Invited teammates</h3>
+
+                  {invitedMembers.map(member => (
+                    <div className="invited-member" key={member.email}>
+                      <div>
+                        <strong>{member.email}</strong>
+                        <span>{member.role.replace('-', ' ')}</span>
+                      </div>
+
+                      <span className="invite-pending">
+                        {member.status}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
-          ))}
-        </div>
-      )}
-    </div>
-  </div>
-)}
+          </div>
+        )}
 
       </main>
     </div>

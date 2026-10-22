@@ -1322,20 +1322,22 @@ button.nav-item.active svg {
   display: grid;
 }
 
+
 .task-row {
   display: flex;
   align-items: center;
   gap: 12px;
   width: 100%;
   min-width: 0;
-  padding: 14px 7px;
-  border: 0;
-  border-top: 1px solid var(--border);
-  border-radius: 10px;
+  margin-top: 8px;
+  padding: 16px 12px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
   color: var(--text);
-  background: transparent;
+  background: var(--surface-soft);
   text-align: left;
-  transition: transform 0.2s ease, background 0.2s ease;
+  transition: transform 0.2s ease, background 0.2s ease,
+    border-color 0.2s ease;
 }
 
 .task-row:hover {
@@ -2591,4 +2593,62 @@ button.nav-item.active svg {
 .project-progress .mint { background-color: #10B981; }
 .project-progress .lavender { background-color: #C4B5FD; }
 .project-progress .red { background-color: #EF4444; }
-.project-progress .slate { background-color: #64748B; }
+.project-progress .slate { background-color: #64748B; } 
+
+.task-meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.task-priority,
+.task-deadline {
+  display: inline-block;
+  font-size: 10px;
+  line-height: 1.5;
+}
+
+.task-deadline {
+  color: var(--muted);
+}
+
+.task-meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 5px;
+}
+
+.task-priority,
+.task-deadline {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  padding: 5px 9px;
+  border-radius: 7px;
+  font-size: 10px;
+  line-height: 1.4;
+  font-weight: 600;
+}
+
+.task-priority.priority-high {
+  color: #ff8fa3;
+  background: rgba(255, 75, 87, 0.14);
+}
+
+.task-priority.priority-medium {
+  color: #ffd580;
+  background: rgba(255, 190, 70, 0.13);
+}
+
+.task-priority.priority-low {
+  color: #79e8b5;
+  background: rgba(65, 210, 145, 0.13);
+}
+
+.task-deadline {
+  color: var(--muted);
+  background: rgba(150, 155, 190, 0.10);
+}
