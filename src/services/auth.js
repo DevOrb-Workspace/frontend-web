@@ -2,23 +2,26 @@
 import { apiRequest } from './api';
 
 export function requestOtp(email) {
-  return apiRequest('/api/auth/request-otp', {
+return apiRequest('/api/v1/auth/registrations/email/request-otp', {
     method: 'POST',
     body: JSON.stringify({ email }),
   });
 }
 
 export function verifyOtp(details) {
-  return apiRequest('/api/auth/verify-otp', {
+  return apiRequest('/api/v1/auth/registrations/verify-otp', {
     method: 'POST',
     body: JSON.stringify(details),
   });
 }
 
 export function login(email, password) {
-  return apiRequest('/api/auth/login', {
+  return apiRequest('/api/v1/auth/login', {
     method: 'POST',
-    body: JSON.stringify({ email, password }),
+    body: JSON.stringify({
+      identifier: email,
+      password,
+    }),
   });
 }
 

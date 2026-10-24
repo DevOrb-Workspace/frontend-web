@@ -1331,9 +1331,10 @@
   white-space: nowrap;
 }
 
-/* Keep the animated robot's head visible */
+/* Show more of the robot's full body in dark mode */
 .landing:not(.light-mode) .orbit-background-video {
-  object-position: center 20%;
+  object-fit: contain;
+  object-position: center bottom;
 }
 
 /* ORBIT light mode — background and video fix */
@@ -1438,4 +1439,161 @@
 .landing.light-mode .landing-hero-content {
   position: relative;
   z-index: 2;
+}
+
+/* DARK MODE: extend the video across the entire hero */
+.landing:not(.light-mode) .landing-hero {
+  position: relative;
+  isolation: isolate;
+}
+
+.landing:not(.light-mode) .landing-robot-space {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  min-height: 100%;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.landing:not(.light-mode) .orbit-background-video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 78% center;
+}
+
+.landing:not(.light-mode) .orbit-video-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+
+.landing:not(.light-mode) .landing-hero-content {
+  position: relative;
+  z-index: 2;
+}
+
+/* FINAL DARK MODE HERO — match light-mode composition */
+.landing:not(.light-mode) .landing-hero {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  min-height: 720px;
+  padding: 90px 6% 70px;
+  overflow: hidden;
+  isolation: isolate;
+  background: linear-gradient(
+    120deg,
+    #100b20 0%,
+    #21152f 48%,
+    #14283c 100%
+  );
+}
+
+.landing:not(.light-mode) .landing-robot-space {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  min-height: 100%;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.landing:not(.light-mode) .orbit-background-video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 25%;
+  opacity: 0.48;
+}
+
+.landing:not(.light-mode) .orbit-video-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(
+    180deg,
+    rgba(16, 11, 32, 0.30) 0%,
+    rgba(25, 15, 39, 0.12) 55%,
+    rgba(16, 11, 32, 0.42) 100%
+  );
+}
+
+.landing:not(.light-mode) .landing-hero-content {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.landing:not(.light-mode) .landing-hero h1 {
+  max-width: 950px;
+  margin-inline: auto;
+  overflow-wrap: normal;
+}
+
+.landing:not(.light-mode) .landing-hero p {
+  max-width: 760px;
+  margin-inline: auto;
+}
+
+.landing:not(.light-mode) .landing-hero .landing-actions {
+  justify-content: center;
+}
+
+.landing:not(.light-mode) .landing-orbit-art {
+  display: none;
+}
+
+@media (max-width: 700px) {
+  .landing:not(.light-mode) .landing-hero {
+    min-height: 680px;
+    padding: 75px 22px 55px;
+  }
+}
+
+/* Restore the animated Orbit rings in dark mode */
+.landing:not(.light-mode) .landing-hero .landing-orbit-art {
+  display: grid;
+  position: relative;
+  z-index: 2;
+  width: 290px;
+  height: 220px;
+  margin: 25px auto 0;
+  flex-shrink: 0;
+}
+
+/* FIX: Show Orbit animation in dark mode */
+.landing:not(.light-mode) .landing-hero .landing-orbit-art {
+  display: grid !important;
+  place-items: center;
+  position: relative;
+  z-index: 3;
+  width: 290px;
+  height: 220px;
+  margin: 25px auto 0;
+  flex-shrink: 0;
+}
+
+.landing:not(.light-mode) .landing-hero .orbit-ring {
+  display: block;
+  opacity: 1;
+}
+
+.landing:not(.light-mode) .landing-hero .orbit-core {
+  display: grid;
+  place-items: center;
 }

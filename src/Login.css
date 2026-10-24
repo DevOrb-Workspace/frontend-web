@@ -616,3 +616,31 @@
 .orbit-preview-button:hover {
   background: rgba(167, 139, 250, 0.2);
 }
+.orbit-organisation-actions {
+  display: flex;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0 0 18px;
+}
+
+.orbit-organisation-actions button {
+  padding: 9px 12px;
+  border: 1px solid rgba(167, 139, 250, 0.4);
+  border-radius: 10px;
+  background: rgba(139, 92, 246, 0.08);
+  color: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.orbit-organisation-actions button.active {
+  background: #8b5cf6;
+  border-color: #a78bfa;
+  color: white;
+}
+
+.orbit-organisation-actions button:hover {
+  border-color: #a78bfa;
+}

@@ -100,10 +100,19 @@ export default function Landing({ onGetStarted }) {
           </div>
         </div>
 
-        <div className="landing-robot-space">
-          <div className="robot-glow"></div>
-          <div className="robot-placeholder">ORBIT</div>
-        </div>
+       <div className="landing-robot-space">
+  <video
+    className="orbit-background-video"
+    autoPlay
+    muted
+    loop
+    playsInline
+    aria-hidden="true"
+  >
+    <source src="/videos/orbit-bg.mp4" type="video/mp4" />
+  </video>
+  <div className="orbit-video-overlay"></div>
+</div>
 
         <div className="landing-orbit-art" aria-hidden="true">
           <span className="orbit-ring ring-one" />

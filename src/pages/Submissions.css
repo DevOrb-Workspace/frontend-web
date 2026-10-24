@@ -1,0 +1,183 @@
+.submissions-page {
+  padding: 28px;
+  color: var(--text-primary, #29213f);
+}
+
+.submissions-heading,
+.submission-list-heading,
+.submission-card,
+.submission-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.submissions-eyebrow {
+  color: #8b5cf6;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+}
+
+.submissions-heading h1 {
+  margin: 10px 0;
+  font-size: clamp(28px, 4vw, 38px);
+}
+
+.submissions-heading h1 span {
+  color: #ec4899;
+}
+
+.submissions-heading p,
+.submission-info p {
+  color: #89849b;
+}
+
+.submissions-back,
+.submission-list-heading select,
+.submission-actions select {
+  padding: 10px 13px;
+  border: 1px solid #e7e1f2;
+  border-radius: 12px;
+  background: var(--card-bg, #fff);
+  color: inherit;
+  cursor: pointer;
+}
+
+.submission-stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  margin: 28px 0;
+}
+
+.submission-stats article,
+.submission-card {
+  border: 1px solid #ece6f7;
+  border-radius: 18px;
+  background: var(--card-bg, #fff);
+}
+
+.submission-stats article {
+  padding: 20px;
+}
+
+.submission-stats article span,
+.submission-stats article strong {
+  display: block;
+}
+
+.submission-stats article span {
+  color: #89849b;
+  font-size: 13px;
+}
+
+.submission-stats article strong {
+  margin-top: 12px;
+  font-size: 30px;
+}
+
+.submission-list-heading {
+  margin-bottom: 16px;
+}
+
+.submission-list-heading h2 {
+  font-size: 20px;
+}
+
+.submission-list {
+  display: grid;
+  gap: 12px;
+}
+
+.submission-card {
+  justify-content: flex-start;
+  padding: 18px;
+}
+
+.submission-symbol {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  background: #f1eaff;
+  color: #8b5cf6;
+  font-size: 22px;
+}
+
+.submission-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.submission-info h3 {
+  margin: 0 0 6px;
+  font-size: 16px;
+}
+
+.submission-info p {
+  margin: 0 0 7px;
+  font-size: 13px;
+}
+
+.submission-info small {
+  color: #a09aad;
+}
+
+.submission-actions {
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.submission-status {
+  padding: 7px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.status-under-review {
+  background: #fff4d9;
+  color: #986300;
+}
+
+.status-approved {
+  background: #dcfce7;
+  color: #167343;
+}
+
+.status-changes-requested {
+  background: #ffe4ed;
+  color: #be185d;
+}
+
+.submission-empty {
+  padding: 28px;
+  color: #89849b;
+  text-align: center;
+}
+
+@media (max-width: 700px) {
+  .submissions-page {
+    padding: 18px;
+  }
+
+  .submissions-heading,
+  .submission-card {
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .submission-stats {
+    grid-template-columns: 1fr;
+  }
+
+  .submission-actions {
+    width: 100%;
+    justify-content: flex-start;
+  }
+}
