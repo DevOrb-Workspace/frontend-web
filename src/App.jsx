@@ -11,12 +11,15 @@ import {
   Pie,
   Cell
 } from 'recharts'
-
 import { useEffect, useState } from 'react'
 import './Analytics.css'
 import './App.css'
 import Login from './Login'
 import Landing from './pages/Landing'
+import Tickets from './pages/Tickets'
+import Submissions from './pages/Submissions'
+
+import { getCurrentUser } from './services/auth'
 
 const initialProjects = [
   {
@@ -50,18 +53,21 @@ const initialTasks = [
     title: 'Create dashboard wireframes',
     project: 'Website Redesign',
     status: 'In Progress',
+    priority: 'High',
     color: 'purple'
   },
   {
     title: 'Fix login page bugs',
     project: 'Mobile App',
     status: 'To Do',
+    priority: 'Medium',
     color: 'coral'
   },
   {
     title: 'Review pull requests',
     project: 'AI Assistant',
     status: 'Completed',
+    priority: 'Low',
     color: 'lime'
   }
 ]
@@ -271,20 +277,277 @@ function AnalyticsPage({ projects, tasks, onBack }) {
   )
 }
 
+
+function MyTasksPage({ tasks, toggleTask, addTask, onBack }) {
+  const [folder, setFolder] = useState(null)
+  const [priority, setPriority] = useState('All')
+
+  const folders = [
+    { title: 'Completed', status: 'Completed', icon: '✓', tone: 'green' },
+    { title: 'Not Completed', status: 'To Do', icon: '○', tone: 'orange' },
+    { title: 'In Progress', status: 'In Progress', icon: '↗', tone: 'purple' }
+  ]
+
+  const folderTasks = tasks.filter(task => task.status === folder)
+  const visibleTasks = folderTasks.filter(
+    task => priority === 'All' || (task.priority || 'Medium') === priority
+  )
+
+  const priorityData = ['High', 'Medium', 'Low'].map(name => ({
+    name,
+    value: folderTasks.filter(task => (task.priority || 'Medium') === name).length
+  })).filter(item => item.value > 0)
+
+  const chartColors = ['#8b5cf6', '#fb923c', '#22c55e']
+
+  return (
+    <div className="my-tasks-page">
+      <div className="my-tasks-heading">
+        <div>
+          <span className="eyebrow">YOUR WORKSPACE / TASKS</span>
+          <h1>{folder ? folders.find(item => item.status === folder)?.title : 'My Tasks'}</h1>
+          <p>
+            {folder
+              ? 'Your tasks, projects and priority breakdown.'
+              : 'Everything you need to keep your work moving.'}
+          </p>
+        </div>
+        <button
+          type="button"
+          className="text-button"
+          onClick={onBack}
+        >
+          ← Back to overview
+        </button>
+      </div>
+
+      {folder ? (
+        <>
+          <button className="text-button my-tasks-back" onClick={() => {
+            setFolder(null)
+            setPriority('All')
+          }}>
+            ← Back to My Tasks
+          </button>
+
+          <div className="my-task-detail-grid">
+            <section className="panel my-task-list-panel">
+              <div className="panel-heading">
+                <div>
+                  <h2>{folder === 'To Do' ? 'Not Completed Tasks' : `${folder} Tasks`}</h2>
+                  <p>Click a task to cycle its status.</p>
+                </div>
+                <strong>{folderTasks.length} tasks</strong>
+              </div>
+
+              <div className="priority-filters my-task-priority-filters">
+                {['All', 'High', 'Medium', 'Low'].map(item => (
+                  <button
+                    type="button"
+                    key={item}
+                    className={`priority-filter ${priority === item ? 'active' : ''}`}
+                    onClick={() => setPriority(item)}
+                  >
+                    {item === 'All' ? 'All priorities' : item}
+                  </button>
+                ))}
+              </div>
+
+              <div className="task-demo-list">
+                {visibleTasks.map(task => (
+                  <button
+                    type="button"
+                    className="task-demo-card"
+                    key={task.id || task.title}
+                    onClick={() => toggleTask(task.title)}
+                    title="Click to cycle task status"
+                  >
+                    <span className={`task-check ${task.status === 'Completed' ? 'checked' : ''}`}>
+                      {task.status === 'Completed' ? '✓' : ''}
+                    </span>
+                    <span className="task-demo-info">
+                      <strong>{task.title}</strong>
+                      <span>Project: {task.project || 'General'}</span>
+                    </span>
+                    <span className={`task-priority priority-${(task.priority || 'Medium').toLowerCase()}`}>
+                      {task.priority || 'Medium'} Priority
+                    </span>
+                    <span className="task-demo-status">{task.status}</span>
+                  </button>
+                ))}
+                {visibleTasks.length === 0 && (
+                  <p className="empty-state">No tasks in this selection yet.</p>
+                )}
+              </div>
+            </section>
+
+            <section className="panel my-task-chart-panel">
+              <h2>Priority breakdown</h2>
+              <p>Based on tasks in this folder.</p>
+              {priorityData.length > 0 ? (
+                <>
+                  <div className="my-task-pie-chart">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <PieChart>
+                        <Pie
+                          data={priorityData}
+                          dataKey="value"
+                          nameKey="name"
+                          cx="50%"
+                          cy="50%"
+                          innerRadius={55}
+                          outerRadius={85}
+                          paddingAngle={4}
+                        >
+                          {priorityData.map((entry, index) => (
+                            <Cell key={entry.name} fill={chartColors[index % chartColors.length]} />
+                          ))}
+                        </Pie>
+                        <Tooltip />
+                      </PieChart>
+                    </ResponsiveContainer>
+                  </div>
+                  {priorityData.map((item, index) => (
+                    <div className="my-task-chart-legend" key={item.name}>
+                      <span>
+                        <i style={{ background: chartColors[index % chartColors.length] }} />
+                        {item.name} priority
+                      </span>
+                      <strong>{item.value}</strong>
+                    </div>
+                  ))}
+                </>
+              ) : (
+                <p className="empty-state">Add tasks to see the chart.</p>
+              )}
+            </section>
+          </div>
+        </>
+      ) : (
+        <div className="my-task-folder-grid">
+          {folders.map(item => {
+            const count = tasks.filter(task => task.status === item.status).length
+            return (
+              <button
+                type="button"
+                key={item.status}
+                className={`my-task-folder-card folder-${item.tone}`}
+                onClick={() => setFolder(item.status)}
+              >
+                <span className="my-task-folder-icon">{item.icon}</span>
+                <span className="my-task-folder-name">{item.title}</span>
+                <strong>{count}</strong>
+                <small>Open folder ↗</small>
+              </button>
+            )
+          })}
+        </div>
+      )}
+
+      <footer className="footer">
+        <span>Made for teams that make things happen <b>♥</b></span>
+        <span>One workspace. More possibilities.</span>
+      </footer>
+    </div>
+  )
+}
+
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false)
+  const [userEmail, setUserEmail] = useState('')
   const [showLanding, setShowLanding] = useState(true)
   const [userRole, setUserRole] = useState('developer')
-  const [userEmail, setUserEmail] = useState('')
+  const [checkingOAuth, setCheckingOAuth] = useState(
+    window.location.pathname === '/auth/callback'
+  )
+
+  useEffect(() => {
+    async function handleOAuthCallback() {
+      if (window.location.pathname !== '/auth/callback') return
+
+      const params = new URLSearchParams(
+        window.location.hash.slice(1)
+      )
+
+      const accessToken = params.get('accessToken')
+      const refreshToken = params.get('refreshToken')
+
+      // Remove tokens from the address bar immediately.
+      window.history.replaceState(
+        {},
+        document.title,
+        '/'
+      )
+
+      if (!accessToken) {
+        setCheckingOAuth(false)
+        setShowLanding(false)
+        return
+      }
+
+
+      try {
+        const data = await getCurrentUser(accessToken)
+        const user = data.user || data.profile || data
+
+        console.log('OAuth profile keys:', Object.keys(data || {}))
+        console.log('OAuth user keys:', Object.keys(data?.user || {}))
+        console.log('OAuth profile:', {
+          email: user?.email || null,
+          role: user?.role || null,
+        })
+
+        const roleMap = {
+          user: 'developer',
+          developer: 'developer',
+          product_manager: 'product-manager',
+          'product-manager': 'product-manager',
+          senior_manager: 'senior-manager',
+          'senior-manager': 'senior-manager',
+        }
+
+        const mappedRole = roleMap[user.role]
+
+
+        if (!user.email || !mappedRole) {
+          throw new Error('User profile is missing required details.')
+        }
+
+        sessionStorage.setItem('orbit-access-token', accessToken)
+
+        if (refreshToken) {
+          sessionStorage.setItem('orbit-refresh-token', refreshToken)
+        }
+
+        setUserRole(mappedRole)
+        setUserEmail(user.email)
+        setShowLanding(false)
+        setIsLoggedIn(true)
+      } catch (error) {
+        console.error('OAuth sign-in failed:', error.message)
+        setShowLanding(false)
+      } finally {
+        setCheckingOAuth(false)
+      }
+    }
+
+    handleOAuthCallback()
+  }, [])
   const [showTaskModal, setShowTaskModal] = useState(false)
   const [newTaskTitle, setNewTaskTitle] = useState('')
   const [newTaskPriority, setNewTaskPriority] = useState('Medium')
   const [newTaskDeadline, setNewTaskDeadline] = useState('')
+  const [newTaskProject, setNewTaskProject] = useState('')
+  const [newTaskDescription, setNewTaskDescription] = useState('')
+  const [newTaskStatus, setNewTaskStatus] = useState('To Do')
   const [dark, setDark] = useState(
     () => localStorage.getItem('team-theme') === 'dark'
   )
 
   const [activePage, setActivePage] = useState('overview')
+  const [selectedTaskStatus, setSelectedTaskStatus] = useState('Completed')
+  const [selectedPriority, setSelectedPriority] = useState('All')
+
 
   const [showProjectModal, setShowProjectModal] = useState(false)
   const [showInviteModal, setShowInviteModal] = useState(false)
@@ -497,30 +760,32 @@ function App() {
     setEditingProject(null)
   }
 
-function addTask() {
-  if (!newTaskTitle.trim()) return
+  function addTask() {
+    if (!newTaskTitle.trim() || !newTaskProject) return
 
-  setTasks(previous => [
-    ...previous,
-    {
-      id: Date.now(),
-      title: newTaskTitle.trim(),
-      project: 'General',
-      status: 'To Do',
-      priority: newTaskPriority,
-      deadline: newTaskDeadline,
-      color: 'purple'
-    }
-  ])
+    setTasks(previous => [
+      ...previous,
+      {
+        id: Date.now(),
+        title: newTaskTitle.trim(),
+        project: newTaskProject,
+        description: newTaskDescription.trim(),
+        status: newTaskStatus,
+        priority: newTaskPriority,
+        deadline: newTaskDeadline,
+        color: 'purple'
+      }
+    ])
 
-  setNewTaskTitle('')
-  setNewTaskPriority('Medium')
-  setNewTaskDeadline('')
-  setShowTaskModal(false)
-}
+    setNewTaskTitle('')
+    setNewTaskProject('')
+    setNewTaskDescription('')
+    setNewTaskStatus('To Do')
+    setNewTaskPriority('Medium')
+    setNewTaskDeadline('')
+    setShowTaskModal(false)
+  }
 
-
-  
   function toggleTask(title) {
     const nextStatus = {
       'To Do': 'In Progress',
@@ -625,7 +890,7 @@ function addTask() {
     )
   }
 
-return (
+  return (
     <div
       className={`app ${dark ? 'dark' : 'light'} role-${userRole}`}
       id="home"
@@ -671,31 +936,36 @@ return (
               {activePage === 'overview' && <b>↗</b>}
             </a>
 
-            <a
-              className="nav-item"
-              href="#projects"
-              onClick={() => setActivePage('overview')}
-            >
-              <span>◈</span> My Projects
-            </a>
 
             <a
-              className="nav-item"
-              href="#tasks"
-              onClick={() => setActivePage('overview')}
+              className={`nav-item ${activePage === 'my-tasks' || activePage === 'task-folder' ? 'active' : ''}`}
+              href="#my-tasks"
+              onClick={(event) => {
+                event.preventDefault()
+                setActivePage('my-tasks')
+              }}
             >
-              <span>✓</span> My Tasks
+              <span>▣</span> My Tasks
+              {(activePage === 'my-tasks' || activePage === 'task-folder') && <b>↗</b>}
             </a>
 
-            {userRole === 'developer' && (
-              <a
-                className="nav-item"
-                href="#activity"
-                onClick={() => setActivePage('overview')}
-              >
-                <span>↗</span> My Activity
-              </a>
-            )}
+
+
+            <button
+              className={`nav-item ${activePage === 'submissions' ? 'active' : ''}`}
+              onClick={() => setActivePage('submissions')}
+            >
+              <span>↗</span> Submissions
+              {activePage === 'submissions' && <b>↗</b>}
+            </button>
+
+            <button
+              className={`nav-item ${activePage === 'tickets' ? 'active' : ''}`}
+              onClick={() => setActivePage('tickets')}
+            >
+              <span>◇</span> Tickets
+              {activePage === 'tickets' && <b>↗</b>}
+            </button>
 
             {userRole === 'product-manager' && (
               <a
@@ -739,17 +1009,8 @@ return (
           </nav>
 
           <div className="sidebar-bottom">
-            <div className="settings-card">
-              <span>⚙</span> Settings
-            </div>
-
-            <button className="logout-button" onClick={inviteTeam}>
-              <span>＋</span> Invite teammates
-            </button>
-
             <div className="profile">
               <div className="avatar">A</div>
-
               <div className="profile-info">
                 <strong>{userEmail.split('@')[0]}</strong>
                 <span>
@@ -809,10 +1070,19 @@ return (
             </div>
           </header>
 
-          {activePage === 'analytics' ? (
+          {activePage === 'submissions' ? (
+            <Submissions onBack={() => setActivePage('overview')} />
+          ) : activePage === 'analytics' ? (
             <AnalyticsPage
               projects={projects}
               tasks={tasks}
+              onBack={() => setActivePage('overview')}
+            />
+          ) : activePage === 'my-tasks' || activePage === 'task-folder' ? (
+            <MyTasksPage
+              tasks={tasks}
+              toggleTask={toggleTask}
+              addTask={addTask}
               onBack={() => setActivePage('overview')}
             />
           ) : (
@@ -833,12 +1103,16 @@ return (
 
                   <div className="hero-actions">
                     {userRole !== 'senior-manager' && (
-                      <button
-                        className="primary-button"
-                        onClick={addProject}
-                      >
-                        + New project
-                      </button>
+                           <button
+          type="button"
+          className="text-button"
+          onClick={() => {
+            setNewTaskProject('')
+            setShowTaskModal(true)
+          }}
+        >
+          + Add task
+        </button>
                     )}
 
                     <a className="secondary-button" href="#tasks">
@@ -998,87 +1272,7 @@ return (
                 </article>
               </section>
 
-              <section className="main-grid">
-                <div className="panel projects-panel" id="projects">
-                  <div className="panel-heading">
-                    <div>
-                      <h2>My Projects</h2>
-                      <p>
-                        {filteredProjects.length} projects in motion
-                      </p>
-                    </div>
-
-                    <button
-                      className="text-button"
-                      onClick={addProject}
-                    >
-                      + Add project
-                    </button>
-                  </div>
-
-                  <div className="project-grid">
-                    {filteredProjects.map(project => (
-                      <article
-                        className="project-card"
-                        key={project.name}
-                      >
-                        <img
-                          className="project-image"
-                          src={project.image}
-                          alt={`${project.name} project`}
-                          loading="lazy"
-                        />
-
-                        <div className="project-card-content">
-                          <span
-                            className={`project-tag ${project.color}`}
-                          >
-                            {project.team}
-                          </span>
-
-                          <div className="project-title-row">
-                            <h3>{project.name}</h3>
-
-                            <button
-                              type="button"
-                              className="edit-project-btn"
-                              onClick={() => editProject(project)}
-                            >
-                              ✏️ Edit
-                            </button>
-                          </div>
-
-                          <div className="project-meta">
-                            <span>◷ Updated recently</span>
-                            <span>♧ Team project</span>
-                          </div>
-
-                          <div className="project-progress">
-                            <span
-                              className={project.color}
-                              style={{
-                                width: `${project.progress}%`
-                              }}
-                            />
-                          </div>
-
-                          <div className="project-card-bottom">
-                            <span>Project progress</span>
-                            <strong>{project.progress}%</strong>
-                          </div>
-                        </div>
-                      </article>
-                    ))}
-
-                    {filteredProjects.length === 0 && (
-                      <p className="empty-state">
-                        No matching projects found.
-                      </p>
-                    )}
-                  </div>
-                </div>
-
-                <div className="right-column">
+              <div className="right-column">
                   <section className="panel chat-panel" id="chat">
                     <div className="panel-heading">
                       <div>
@@ -1163,10 +1357,7 @@ return (
                     </form>
                   </section>
 
-                  <section
-                    className="panel activity-panel"
-                    id="activity"
-                  >
+                  <section className="panel activity-panel" id="activity">
                     <div className="panel-heading">
                       <div>
                         <h2>Project activity</h2>
@@ -1217,8 +1408,7 @@ return (
                       Check team tasks ↗
                     </a>
                   </section>
-                </div>
-              </section>
+              </div>
 
               <section className="panel tasks-panel" id="tasks">
                 <div className="panel-heading">
@@ -1242,52 +1432,89 @@ return (
                   </button>
                 </div>
 
-                <div className="task-list">
-                  {filteredTasks.map(task => (
-                    <button
-                      className="task-row"
-                      key={task.title}
-                      onClick={() => toggleTask(task.title)}
-                      title="Click to change task status"
-                    >
-                      <span
-                        className={`task-check ${task.status === 'Completed' ? 'checked' : ''
-                          }`}
+                <div className="task-status-cards">
+                  {[
+                    { title: 'Completed', status: 'Completed', icon: '✓' },
+                    { title: 'Not Completed', status: 'To Do', icon: '○' },
+                    { title: 'In Progress', status: 'In Progress', icon: '↗' }
+                  ].map(item => {
+                    const count = filteredTasks.filter(
+                      task => task.status === item.status
+                    ).length
+
+                    return (
+                      <button
+                        type="button"
+                        key={item.status}
+                        className={`task-status-card ${selectedTaskStatus === item.status ? 'selected' : ''}`}
+                        onClick={() => setSelectedTaskStatus(item.status)}
                       >
-                        {task.status === 'Completed' ? '✓' : ''}
-                      </span>
+                        <span className="task-status-icon">{item.icon}</span>
+                        <span className="task-status-title">{item.title}</span>
+                        <strong>{count}</strong>
+                        <small>View tasks ↗</small>
+                      </button>
+                    )
+                  })}
+                </div>
 
+                <div className="task-filter-heading">
+                  <div>
+                    <h3>{selectedTaskStatus === 'To Do' ? 'Not Completed Tasks' : selectedTaskStatus + ' Tasks'}</h3>
+                    <p>Choose a priority to narrow down your tasks.</p>
+                  </div>
 
-                      <span className="task-info">
-                        <strong>{task.title}</strong>
-                        <span>{task.project}</span>
+                  <div className="priority-filters">
+                    {['All', 'High', 'Medium', 'Low'].map(priority => (
+                      <button
+                        type="button"
+                        key={priority}
+                        className={`priority-filter ${selectedPriority === priority ? 'active' : ''}`}
+                        onClick={() => setSelectedPriority(priority)}
+                      >
+                        {priority === 'All' ? 'All priorities' : priority}
+                      </button>
+                    ))}
+                  </div>
+                </div>
 
-                        <span className="task-meta">
-                          {task.priority && (
-                            <span className={`task-priority priority-${task.priority.toLowerCase()}`}>
-                              {task.priority} Priority
-                            </span>
-                          )}
-
-                          {task.deadline && (
-                            <span className="task-deadline">
-                              Due: {task.deadline}
-                            </span>
-                          )}
+                <div className="task-demo-list">
+                  {filteredTasks
+                    .filter(task => task.status === selectedTaskStatus)
+                    .filter(task => selectedPriority === 'All' || (task.priority || 'Medium') === selectedPriority)
+                    .map(task => (
+                      <button
+                        type="button"
+                        className="task-demo-card"
+                        key={task.id || task.title}
+                        onClick={() => toggleTask(task.title)}
+                        title="Click to cycle task status"
+                      >
+                        <span className={`task-check ${task.status === 'Completed' ? 'checked' : ''}`}>
+                          {task.status === 'Completed' ? '✓' : ''}
                         </span>
-                      </span>
 
-                      <span className={`task-status ${task.color}`}>
-                        {task.status}
-                      </span>
-                    </button>
-                  ))}
+                        <span className="task-demo-info">
+                          <strong>{task.title}</strong>
+                          <span>Project: {task.project || 'General'}</span>
+                        </span>
 
-                  {filteredTasks.length === 0 && (
-                    <p className="empty-state">
-                      No matching tasks found.
-                    </p>
-                  )}
+                        <span className={`task-priority priority-${(task.priority || 'Medium').toLowerCase()}`}>
+                          {task.priority || 'Medium'} Priority
+                        </span>
+
+                        <span className="task-demo-status">{task.status}</span>
+                      </button>
+                    ))}
+
+                  {filteredTasks
+                    .filter(task => task.status === selectedTaskStatus)
+                    .filter(task => selectedPriority === 'All' || (task.priority || 'Medium') === selectedPriority)
+                    .length === 0 && (
+                      <p className="empty-state">
+                        No tasks match these filters. Try another priority or add a task.
+                      </p>
+                    )}
                 </div>
 
                 <div className="task-summary">
@@ -1306,6 +1533,116 @@ return (
             </>
           )}
         </section>
+
+{showTaskModal && (
+  <div className="project-modal-backdrop">
+    <div className="project-modal task-modal">
+      <div className="project-modal-header">
+        <div>
+          <h2>Create New Task ✦</h2>
+          <p>Add the details and assign it to a project.</p>
+        </div>
+
+        <button
+          type="button"
+          className="modal-close"
+          onClick={() => setShowTaskModal(false)}
+          aria-label="Close task form"
+        >
+          ×
+        </button>
+      </div>
+
+      <form
+        className="project-form"
+        onSubmit={event => {
+          event.preventDefault()
+          addTask()
+        }}
+      >
+        <label htmlFor="task-title">Task Title *</label>
+        <input
+          id="task-title"
+          type="text"
+          placeholder="e.g. Design landing page"
+          value={newTaskTitle}
+          onChange={event => setNewTaskTitle(event.target.value)}
+          required
+        />
+
+        <label htmlFor="task-project">Project *</label>
+        <select
+          id="task-project"
+          value={newTaskProject}
+          onChange={event => setNewTaskProject(event.target.value)}
+          required
+        >
+          <option value="">Select a project</option>
+          {projects.map(project => (
+            <option key={project.name} value={project.name}>
+              {project.name}
+            </option>
+          ))}
+        </select>
+
+        <label htmlFor="task-description">Description</label>
+        <textarea
+          id="task-description"
+          placeholder="Describe what needs to be done..."
+          value={newTaskDescription}
+          onChange={event => setNewTaskDescription(event.target.value)}
+        />
+
+        <label htmlFor="task-priority">Priority</label>
+        <select
+          id="task-priority"
+          value={newTaskPriority}
+          onChange={event => setNewTaskPriority(event.target.value)}
+        >
+          <option value="High">High</option>
+          <option value="Medium">Medium</option>
+          <option value="Low">Low</option>
+        </select>
+
+        <label htmlFor="task-status">Status</label>
+        <select
+          id="task-status"
+          value={newTaskStatus}
+          onChange={event => setNewTaskStatus(event.target.value)}
+        >
+          <option value="To Do">Not Completed</option>
+          <option value="In Progress">In Progress</option>
+          <option value="Completed">Completed</option>
+        </select>
+
+        <label htmlFor="task-deadline">Due Date</label>
+        <input
+          id="task-deadline"
+          type="date"
+          value={newTaskDeadline}
+          onChange={event => setNewTaskDeadline(event.target.value)}
+        />
+
+        <div className="project-form-actions">
+          <button
+            type="button"
+            className="cancel-project-btn"
+            onClick={() => setShowTaskModal(false)}
+          >
+            Cancel
+          </button>
+
+          <button
+            type="submit"
+            className="create-project-btn"
+          >
+            Create Task
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+)}
 
         {showProjectModal && (
           <div className="project-modal-backdrop">

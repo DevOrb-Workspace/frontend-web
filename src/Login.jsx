@@ -1,9 +1,9 @@
 
-import { useState } from 'react';
-import { login as loginUser } from './services/auth';
-import './Login.css';
-import { FcGoogle } from 'react-icons/fc';
-import { FaGithub } from 'react-icons/fa';
+import { useState } from 'react'
+import { login as loginUser } from './services/auth'
+import './Login.css'
+import { FcGoogle } from 'react-icons/fc'
+import { FaGithub } from 'react-icons/fa'
 
 function OrbitArt() {
   return (
@@ -57,18 +57,12 @@ function OrbitArt() {
         <circle cx="185" cy="355" r="2" />
       </g>
     </svg>
-  );
+  )
 }
-
 
 function OrbitMark() {
   return (
-    <svg
-      className="orbit-mark"
-      viewBox="0 0 48 48"
-      aria-hidden="true"
-    >
-      {/* Planet orbit ring */}
+    <svg className="orbit-mark" viewBox="0 0 48 48" aria-hidden="true">
       <ellipse
         cx="24"
         cy="24"
@@ -79,16 +73,7 @@ function OrbitMark() {
         stroke="#C4B5FD"
         strokeWidth="2.5"
       />
-
-      {/* Planet */}
-      <circle
-        cx="24"
-        cy="24"
-        r="10"
-        fill="#8B5CF6"
-      />
-
-      {/* Planet highlight */}
+      <circle cx="24" cy="24" r="10" fill="#8B5CF6" />
       <path
         d="M19 19 Q23 15 28 19"
         fill="none"
@@ -96,64 +81,76 @@ function OrbitMark() {
         strokeWidth="2"
         strokeLinecap="round"
       />
-
-      {/* Orbit accent */}
       <circle cx="7" cy="33" r="3.5" fill="#38BDF8" />
       <circle cx="39" cy="13" r="3.5" fill="#E879F9" />
     </svg>
-  );
+  )
 }
-
 
 export default function Login({
   onLoginSuccess,
   onForgotPassword,
-  onPreviewDashboard
+  onPreviewDashboard,
 }) {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [role, setRole] = useState('developer');
-  const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [role, setRole] = useState('developer')
+  const [showPassword, setShowPassword] = useState(false)
+  const [error, setError] = useState('')
+  const [loading, setLoading] = useState(false)
+
+  const [organisationMode, setOrganisationMode] = useState('')
+  const [organisationName, setOrganisationName] = useState('')
+  const [organisationId, setOrganisationId] = useState('')
+  const [organisationCode, setOrganisationCode] = useState('')
 
   const handleGithubLogin = () => {
     window.location.href =
-      'https://backend-core-iwxv.onrender.com/api/auth/oauth/github';
-  };
+      'https://backend-core-iwxv.onrender.com/api/auth/oauth/github'
+  }
 
   const handleGoogleLogin = () => {
     window.location.href =
-      'https://backend-core-iwxv.onrender.com/api/auth/oauth/google';
-  };
+      'https://backend-core-iwxv.onrender.com/api/auth/oauth/google'
+  }
 
   async function handleLogin(event) {
-    event.preventDefault();
-    setError('');
+    event.preventDefault()
+    setError('')
 
     if (!email.trim() || !password) {
-      setError('Please enter your email and password.');
-      return;
+      setError('Please enter your email and password.')
+      return
     }
 
-    setLoading(true);
+    if (organisationMode === 'create' && !organisationName.trim()) {
+      setError('Please enter an organisation name.')
+      return
+    }
+
+    if (
+      organisationMode === 'join' &&
+      (!organisationId.trim() || !organisationCode.trim())
+    ) {
+      setError('Please enter your organisation ID and invite code.')
+      return
+    }
+
+    setLoading(true)
 
     try {
-      const data = await loginUser(email.trim(), password);
+      const data = await loginUser(email.trim(), password)
 
-      console.log('Login API response:', data);
-
-      if (data.success === false) {
-        throw new Error(data.message || 'Login failed.');
+      if (data?.success === false) {
+        throw new Error(data.message || 'Login failed.')
       }
 
-      const user = data.user || data.profile;
+      const user = data?.user || data?.profile
 
       if (!user?.role) {
-        setError(
-          'Login response received, but the user profile format needs verification.'
-        );
-        return;
+        throw new Error(
+          'Login response received, but the user profile needs verification.'
+        )
       }
 
       const roleMap = {
@@ -163,27 +160,29 @@ export default function Login({
         'product-manager': 'product-manager',
         senior_manager: 'senior-manager',
         'senior-manager': 'senior-manager',
-      };
-
-      const mappedRole = roleMap[user.role];
-
-      if (!mappedRole) {
-        setError('Your account has an unsupported role.');
-        return;
       }
 
-      // The backend role determines dashboard access.
-      // The dropdown is for display/selection only.
+     const mappedRole = roleMap[String(user.role).toLowerCase()]
+
+      if (!mappedRole) {
+        throw new Error('Your account has an unsupported role.')
+      }
+
       onLoginSuccess?.({
         email: user.email || email.trim(),
         role: mappedRole,
         user,
-      });
+      })
     } catch (err) {
-      setError(err.message || 'Unable to sign in. Please try again.');
+      setError(err.message || 'Unable to sign in. Please try again.')
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
+  }
+
+  function changeOrganisationMode(mode) {
+    setOrganisationMode(mode)
+    setError('')
   }
 
   return (
@@ -214,7 +213,7 @@ export default function Login({
         <OrbitArt />
 
         <div className="orbit-benefits">
-         <div><span>◉</span> Work together</div>
+          <div><span>◉</span> Work together</div>
           <div><span>↗</span> Stay productive</div>
           <div><span>✧</span> Build the future</div>
         </div>
@@ -234,6 +233,92 @@ export default function Login({
           <p className="orbit-login-subtitle">
             Sign in to continue to your workspace.
           </p>
+
+          <div className="orbit-organisation-actions">
+            <button
+              type="button"
+              className={organisationMode === 'create' ? 'active' : ''}
+              aria-pressed={organisationMode === 'create'}
+              onClick={() => changeOrganisationMode(
+                organisationMode === 'create' ? '' : 'create'
+              )}
+            >
+              Create an Organisation
+            </button>
+
+            <button
+              type="button"
+              className={organisationMode === 'join' ? 'active' : ''}
+              aria-pressed={organisationMode === 'join'}
+              onClick={() => changeOrganisationMode(
+                organisationMode === 'join' ? '' : 'join'
+              )}
+            >
+              Join an Organisation
+            </button>
+          </div>
+
+          {organisationMode === 'create' && (
+            <>
+              <label htmlFor="orbit-org-name">Organisation Name</label>
+
+              <div className="orbit-input-wrap">
+                <span aria-hidden="true">✧</span>
+                <input
+                  id="orbit-org-name"
+                  type="text"
+                  placeholder="Enter organisation name"
+                  value={organisationName}
+                  onChange={(event) => setOrganisationName(event.target.value)}
+                  autoComplete="organization"
+                />
+              </div>
+            </>
+          )}
+
+          {organisationMode === 'join' && (
+            <>
+              <label htmlFor="orbit-org-id">Organisation ID</label>
+
+              <div className="orbit-input-wrap">
+                <span aria-hidden="true">⌘</span>
+                <input
+                  id="orbit-org-id"
+                  type="text"
+                  placeholder="Enter organisation ID"
+                  value={organisationId}
+                  onChange={(event) => setOrganisationId(event.target.value)}
+                />
+              </div>
+
+              <label htmlFor="orbit-org-code">Organisation Invite Code</label>
+
+              <div className="orbit-input-wrap">
+                <span aria-hidden="true">✉</span>
+                <input
+                  id="orbit-org-code"
+                  type="text"
+                  placeholder="Enter invite code"
+                  value={organisationCode}
+                  onChange={(event) => setOrganisationCode(event.target.value)}
+                />
+              </div>
+
+              <label htmlFor="orbit-role">Select your role</label>
+
+              <div className="orbit-input-wrap orbit-role-wrap">
+                <select
+                  id="orbit-role"
+                  value={role}
+                  onChange={(event) => setRole(event.target.value)}
+                >
+                  <option value="developer">Developer</option>
+                  <option value="product-manager">Product Manager</option>
+                  <option value="senior-manager">Senior Manager</option>
+                </select>
+              </div>
+            </>
+          )}
 
           <label htmlFor="orbit-email">Email address</label>
 
@@ -267,25 +352,11 @@ export default function Login({
             <button
               className="orbit-show-password"
               type="button"
-              onClick={() => setShowPassword(!showPassword)}
+              onClick={() => setShowPassword((current) => !current)}
               aria-label={showPassword ? 'Hide password' : 'Show password'}
             >
               {showPassword ? 'Hide' : 'Show'}
             </button>
-          </div>
-
-          <label htmlFor="orbit-role">Select your role</label>
-
-          <div className="orbit-input-wrap orbit-role-wrap">
-            <select
-              id="orbit-role"
-              value={role}
-              onChange={(event) => setRole(event.target.value)}
-            >
-              <option value="developer">Developer</option>
-              <option value="product-manager">Product Manager</option>
-              <option value="senior-manager">Senior Manager</option>
-            </select>
           </div>
 
           <div className="orbit-login-options">
@@ -313,15 +384,17 @@ export default function Login({
             {loading ? 'Signing in...' : 'Sign in'}
             {!loading && <span aria-hidden="true"> →</span>}
           </button>
-{import.meta.env.DEV && (
-  <button
-    type="button"
-    className="orbit-preview-button"
-    onClick={() => onPreviewDashboard?.(role)}
-  >
-    Preview Dashboard →
-  </button>
-)}
+
+          {import.meta.env.DEV && (
+            <button
+              type="button"
+              className="orbit-preview-button"
+              onClick={() => onPreviewDashboard?.(role)}
+            >
+              Preview Dashboard →
+            </button>
+          )}
+
           <div className="orbit-divider">
             <span>or continue with</span>
           </div>
@@ -352,5 +425,5 @@ export default function Login({
         </form>
       </section>
     </main>
-  );
+  )
 }
