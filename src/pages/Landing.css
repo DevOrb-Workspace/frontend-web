@@ -1597,3 +1597,16 @@
   display: grid;
   place-items: center;
 }
+
+/* Center Orbit landing hero paragraph */
+.landing .landing-hero p {
+  text-align: center;
+}
+
+/* Fix: center the Orbit hero paragraph in dark mode */
+.landing:not(.light-mode) .landing-hero > .landing-hero-content > p {
+  max-width: 760px;
+  width: 100%;
+  margin: 20px auto;
+  text-align: center;
+}
