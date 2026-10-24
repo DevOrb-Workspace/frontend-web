@@ -1322,20 +1322,22 @@ button.nav-item.active svg {
   display: grid;
 }
 
+
 .task-row {
   display: flex;
   align-items: center;
   gap: 12px;
   width: 100%;
   min-width: 0;
-  padding: 14px 7px;
-  border: 0;
-  border-top: 1px solid var(--border);
-  border-radius: 10px;
+  margin-top: 8px;
+  padding: 16px 12px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
   color: var(--text);
-  background: transparent;
+  background: var(--surface-soft);
   text-align: left;
-  transition: transform 0.2s ease, background 0.2s ease;
+  transition: transform 0.2s ease, background 0.2s ease,
+    border-color 0.2s ease;
 }
 
 .task-row:hover {
@@ -1973,4 +1975,1135 @@ button.nav-item.active svg {
 
 .edit-project-btn:hover {
   background: #ede9fe;
+}
+
+/* =========================================
+   ORBIT ROLE-BASED THEMES
+   ========================================= */
+
+/* Developer: Dark navy + purple + lime */
+
+/* Developer: Light theme */
+.app.light.role-developer {
+  --bg: #f4f5fb;
+  --surface: #ffffff;
+  --card: #ffffff;
+  --surface-soft: #e9e8f7;
+  --text: #25243b;
+  --muted: #777d98;
+  --border: #dfe2f0;
+  --sidebar: #ffffff;
+  --purple: #7954d9;
+  --green: #4b936f;
+  --pink: #d85c9b;
+  --cyan: #328f9b;
+  --lime: #b8e65c;
+}
+
+/* Developer: Dark theme */
+.app.dark.role-developer {
+  --bg: #101426;
+  --surface: #191e33;
+  --card: #191e33;
+  --surface-soft: #252b45;
+  --text: #f3f2ff;
+  --muted: #a3abc4;
+  --border: #303751;
+  --sidebar: #151a2d;
+  --purple: #a477ff;
+  --green: #c8f56a;
+  --pink: #ff9fce;
+  --cyan: #65e6e0;
+  --lime: #c8f56a;
+}
+
+
+
+/* Product Manager: Pink + lavender + mint */
+.app.role-product-manager {
+  --bg: #fff7fb;
+  --surface: #ffffff;
+  --card: #ffffff;
+  --text: #38263f;
+  --muted: #89768d;
+  --border: #f0dce9;
+  --purple: #9b6bdb;
+  --green: #4eaa8d;
+  --pink: #ed82b5;
+  --cyan: #66bfb0;
+  --lime: #bcebd9;
+}
+
+/* Senior Manager: Burgundy + champagne gold + ivory */
+.app.role-senior-manager {
+  --bg: #faf5ed;
+  --surface: #fffaf2;
+  --card: #fffaf2;
+  --text: #402331;
+  --muted: #8b747a;
+  --border: #e9d8c9;
+  --purple: #813b58;
+  --green: #58856b;
+  --pink: #c69b65;
+  --cyan: #8d6a7a;
+  --lime: #d9bd80;
+}
+
+/* Shared dashboard surfaces */
+.app.role-developer,
+.app.role-product-manager,
+.app.role-senior-manager {
+  background: var(--bg);
+  color: var(--text);
+}
+
+.app.role-developer .panel,
+.app.role-developer .stat-card {
+  background: var(--surface);
+  border-color: var(--border);
+  color: var(--text);
+}
+
+.app.role-product-manager .panel,
+.app.role-product-manager .stat-card {
+  background: var(--surface);
+  border-color: var(--border);
+  color: var(--text);
+  box-shadow: 0 8px 25px rgba(177, 110, 157, 0.07);
+}
+
+.app.role-senior-manager .panel,
+.app.role-senior-manager .stat-card {
+  background: var(--surface);
+  border-color: var(--border);
+  color: var(--text);
+  box-shadow: 0 8px 25px rgba(100, 60, 48, 0.06);
+}
+
+/* Sidebar and navigation */
+.app.role-product-manager .sidebar {
+  background: #fff0f7;
+  border-color: var(--border);
+}
+
+.app.role-senior-manager .sidebar {
+  background: #f1e4d8;
+  border-color: var(--border);
+}
+
+.app.role-product-manager .nav-item.active {
+  color: #7c3f91;
+  background: #f4e5ff;
+}
+
+.app.role-senior-manager .nav-item.active {
+  color: #fffaf2;
+  background: #813b58;
+}
+
+/* Hero banner */
+.app.role-developer .hero {
+  background: linear-gradient(120deg, #202744, #38235a);
+  border: 1px solid #514071;
+}
+
+.app.role-product-manager .hero {
+  background: linear-gradient(120deg, #f9d9e9, #e9e0ff 65%, #d8f5e9);
+  border: 1px solid #edd5eb;
+  color: #38263f;
+}
+
+.app.role-senior-manager .hero {
+  background: linear-gradient(120deg, #5b263d, #813b58 65%, #a77b59);
+  border: 1px solid #a77b59;
+  color: #fff8ed;
+}
+
+.app.role-product-manager .hero h1,
+.app.role-product-manager .hero p,
+.app.role-product-manager .hero .eyebrow {
+  color: #38263f;
+}
+
+.app.role-senior-manager .hero h1,
+.app.role-senior-manager .hero p,
+.app.role-senior-manager .hero .eyebrow {
+  color: #fff8ed;
+}
+
+/* Accent buttons */
+.app.role-product-manager .primary-button {
+  background: #9b6bdb;
+  color: #ffffff;
+}
+
+.app.role-senior-manager .primary-button {
+  background: #d9bd80;
+  color: #402331;
+}
+
+/* Keep role themes readable on smaller screens */
+@media (max-width: 650px) {
+  .app.role-product-manager .sidebar,
+  .app.role-senior-manager .sidebar {
+    background: var(--surface);
+  }
+}
+
+/* ===== ORBIT ROLE-BASED DARK THEMES ===== */
+
+/* Developer: Navy + purple + lime */
+.app.dark.role-developer {
+  --bg: #101426;
+  --surface: #191e33;
+  --card: #191e33;
+  --text: #f3f2ff;
+  --muted: #a3abc4;
+  --border: #303751;
+  --purple: #a477ff;
+  --green: #c8f56a;
+  --pink: #ff9fce;
+  --cyan: #65e6e0;
+  --lime: #c8f56a;
+}
+
+/* Product Manager: Dark plum + pink + mint */
+.app.dark.role-product-manager {
+  --bg: #211627;
+  --surface: #302038;
+  --card: #302038;
+  --text: #fff3fa;
+  --muted: #c6aabd;
+  --border: #51354f;
+  --purple: #c49aff;
+  --green: #79dfb8;
+  --pink: #ff9fce;
+  --cyan: #78d9ca;
+  --lime: #bcebd9;
+}
+
+/* Senior Manager: Burgundy + charcoal + gold */
+.app.dark.role-senior-manager {
+  --bg: #21151c;
+  --surface: #302029;
+  --card: #302029;
+  --text: #fff5e9;
+  --muted: #c8adb3;
+  --border: #593542;
+  --purple: #d49bb4;
+  --green: #91b69a;
+  --pink: #d9bd80;
+  --cyan: #c99aaa;
+  --lime: #e8d29e;
+}
+
+/* Shared dark surfaces */
+.app.dark.role-developer .panel,
+.app.dark.role-developer .stat-card,
+.app.dark.role-product-manager .panel,
+.app.dark.role-product-manager .stat-card,
+.app.dark.role-senior-manager .panel,
+.app.dark.role-senior-manager .stat-card {
+  background: var(--surface);
+  color: var(--text);
+  border-color: var(--border);
+}
+
+/* Product Manager dark sidebar */
+.app.dark.role-product-manager .sidebar {
+  background: #281a30;
+  border-color: var(--border);
+}
+
+/* Senior Manager dark sidebar */
+.app.dark.role-senior-manager .sidebar {
+  background: #291820;
+  border-color: var(--border);
+}
+
+/* Product Manager dark hero */
+.app.dark.role-product-manager .hero {
+  background: linear-gradient(120deg, #49304d, #302744 65%, #214039);
+  border-color: var(--border);
+  color: var(--text);
+}
+
+/* Senior Manager dark hero */
+.app.dark.role-senior-manager .hero {
+  background: linear-gradient(120deg, #482333, #633047 65%, #60462e);
+  border-color: var(--border);
+  color: var(--text);
+}
+
+.app.dark.role-product-manager .hero h1,
+.app.dark.role-product-manager .hero p,
+.app.dark.role-product-manager .hero .eyebrow,
+.app.dark.role-senior-manager .hero h1,
+.app.dark.role-senior-manager .hero p,
+.app.dark.role-senior-manager .hero .eyebrow {
+  color: var(--text);
+}
+
+/* ===== FIX: DEVELOPER FULL DARK MODE ===== */
+
+.app.dark.role-developer .dashboard-shell,
+.app.dark.role-developer .workspace {
+  background: var(--bg);
+  color: var(--text);
+}
+
+.app.dark.role-developer .topbar,
+.app.dark.role-developer .section-heading {
+  color: var(--text);
+}
+
+.app.dark.role-developer .hero {
+  background: linear-gradient(120deg, #202744, #38235a);
+  border-color: #514071;
+  color: #f3f2ff;
+}
+
+.app.dark.role-developer .hero h1,
+.app.dark.role-developer .hero p,
+.app.dark.role-developer .hero .eyebrow {
+  color: #f3f2ff;
+}
+
+.app.dark.role-developer .panel,
+.app.dark.role-developer .stat-card,
+.app.dark.role-developer .project-card,
+.app.dark.role-developer .analytics-panel,
+.app.dark.role-developer .analytics-summary-card {
+  background: var(--surface) !important;
+  color: var(--text) !important;
+  border-color: var(--border) !important;
+}
+
+.app.dark.role-developer .panel h2,
+.app.dark.role-developer .stat-card h3,
+.app.dark.role-developer .project-card h3,
+.app.dark.role-developer .analytics-panel h2 {
+  color: var(--text);
+}
+
+.app.dark.role-developer .panel p,
+.app.dark.role-developer .stat-card p,
+.app.dark.role-developer .project-card p {
+  color: var(--muted);
+}
+
+.app.dark.role-developer .project-form input,
+.app.dark.role-developer .project-form textarea,
+.app.dark.role-developer .project-form select {
+  background: var(--surface);
+  color: var(--text);
+  border-color: var(--border);
+}
+
+.app.dark.role-developer .project-modal {
+  background: var(--surface);
+  color: var(--text);
+}
+
+.app.dark.role-developer .project-modal-header h2,
+.app.dark.role-developer .project-modal-header p {
+  color: var(--text);
+}
+
+/* ===== ORBIT THEME FIX: ALL DASHBOARD SECTIONS ===== */
+
+.app.light,
+.app.dark {
+  color: var(--text);
+}
+
+.app.light .dashboard-shell,
+.app.light .workspace,
+.app.dark .dashboard-shell,
+.app.dark .workspace {
+  background-color: var(--bg);
+  color: var(--text);
+}
+
+.app.light .panel,
+.app.light .stat-card,
+.app.light .project-card,
+.app.dark .panel,
+.app.dark .stat-card,
+.app.dark .project-card {
+  background-color: var(--surface) !important;
+  color: var(--text) !important;
+  border-color: var(--border) !important;
+}
+
+.app.light .panel h2,
+.app.light .panel h3,
+.app.light .stat-card h2,
+.app.light .stat-card h3,
+.app.dark .panel h2,
+.app.dark .panel h3,
+.app.dark .stat-card h2,
+.app.dark .stat-card h3 {
+  color: var(--text);
+}
+
+.app.light .panel p,
+.app.light .stat-card p,
+.app.light .project-card p,
+.app.dark .panel p,
+.app.dark .stat-card p,
+.app.dark .project-card p {
+  color: var(--muted);
+}
+
+/* Modal and form controls */
+.app.light .project-modal,
+.app.dark .project-modal {
+  background: var(--surface);
+  color: var(--text);
+}
+
+.app.light .project-form input,
+.app.light .project-form textarea,
+.app.light .project-form select,
+.app.dark .project-form input,
+.app.dark .project-form textarea,
+.app.dark .project-form select {
+  background: var(--bg);
+  color: var(--text);
+  border-color: var(--border);
+}
+
+.brand-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.brand-icon svg {
+  width: 36px;
+  height: 36px;
+  display: block;
+}
+
+.hero-orbit-core {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hero-orbit-core svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.hero-network-icon {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  filter: drop-shadow(0 0 12px rgba(167, 139, 250, 0.45));
+  animation: network-float 4s ease-in-out infinite;
+}
+
+@keyframes network-float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+.invite-modal {
+  max-width: 520px;
+}
+
+.invite-error {
+  color: #ef4444;
+  font-size: 13px;
+  margin: 0;
+}
+
+.invite-success {
+  color: #16a34a;
+  font-size: 13px;
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.invited-members {
+  margin-top: 24px;
+  border-top: 1px solid rgba(139, 92, 246, 0.2);
+  padding-top: 18px;
+}
+
+.invited-members h3 {
+  font-size: 15px;
+  margin: 0 0 12px;
+}
+
+.invited-member {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(139, 92, 246, 0.12);
+}
+
+.invited-member > div {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.invited-member strong {
+  font-size: 13px;
+  overflow-wrap: anywhere;
+}
+
+.invited-member > div span {
+  font-size: 12px;
+  text-transform: capitalize;
+  opacity: 0.7;
+}
+
+.invite-pending {
+  color: #a78bfa;
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.project-color-palette {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 8px 0;
+}
+
+.project-color-swatch {
+  width: 34px;
+  height: 34px;
+  border: 3px solid transparent;
+  border-radius: 50%;
+  background: var(--swatch-color);
+  color: white;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.project-color-swatch:hover {
+  transform: scale(1.12);
+}
+
+.project-color-swatch.selected {
+  border-color: var(--swatch-color);
+  box-shadow: 0 0 0 3px var(--surface-color, white);
+  outline: 2px solid var(--swatch-color);
+  outline-offset: 2px;
+}
+
+.selected-color-label {
+  margin: 4px 0 12px;
+  font-size: 12px;
+  text-transform: capitalize;
+  opacity: 0.75;
+}
+/* Additional project colors */
+.project-tag.pink,
+.task-status.pink {
+  background-color: #EC4899;
+  color: white;
+}
+
+.project-tag.cyan,
+.task-status.cyan {
+  background-color: #06B6D4;
+  color: white;
+}
+
+.project-tag.blue,
+.task-status.blue {
+  background-color: #3B82F6;
+  color: white;
+}
+
+.project-tag.orange,
+.task-status.orange {
+  background-color: #F97316;
+  color: white;
+}
+
+.project-tag.indigo,
+.task-status.indigo {
+  background-color: #6366F1;
+  color: white;
+}
+
+.project-tag.mint,
+.task-status.mint {
+  background-color: #10B981;
+  color: white;
+}
+
+.project-tag.lavender,
+.task-status.lavender {
+  background-color: #C4B5FD;
+  color: #2D2048;
+}
+
+.project-tag.red,
+.task-status.red {
+  background-color: #EF4444;
+  color: white;
+}
+
+.project-tag.slate,
+.task-status.slate {
+  background-color: #64748B;
+  color: white;
+}
+
+/* Project progress bars */
+.project-progress .pink,
+.project-progress .cyan,
+.project-progress .blue,
+.project-progress .orange,
+.project-progress .indigo,
+.project-progress .mint,
+.project-progress .lavender,
+.project-progress .red,
+.project-progress .slate {
+  height: 100%;
+}
+
+.project-progress .pink { background-color: #EC4899; }
+.project-progress .cyan { background-color: #06B6D4; }
+.project-progress .blue { background-color: #3B82F6; }
+.project-progress .orange { background-color: #F97316; }
+.project-progress .indigo { background-color: #6366F1; }
+.project-progress .mint { background-color: #10B981; }
+.project-progress .lavender { background-color: #C4B5FD; }
+.project-progress .red { background-color: #EF4444; }
+.project-progress .slate { background-color: #64748B; } 
+
+.task-meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.task-priority,
+.task-deadline {
+  display: inline-block;
+  font-size: 10px;
+  line-height: 1.5;
+}
+
+.task-deadline {
+  color: var(--muted);
+}
+
+.task-meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 5px;
+}
+
+.task-priority,
+.task-deadline {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  padding: 5px 9px;
+  border-radius: 7px;
+  font-size: 10px;
+  line-height: 1.4;
+  font-weight: 600;
+}
+
+.task-priority.priority-high {
+  color: #ff8fa3;
+  background: rgba(255, 75, 87, 0.14);
+}
+
+.task-priority.priority-medium {
+  color: #ffd580;
+  background: rgba(255, 190, 70, 0.13);
+}
+
+.task-priority.priority-low {
+  color: #79e8b5;
+  background: rgba(65, 210, 145, 0.13);
+}
+
+.task-deadline {
+  color: var(--muted);
+  background: rgba(150, 155, 190, 0.10);
+}
+
+/* ORBIT task board */
+.task-board {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  align-items: start;
+  margin-top: 14px;
+}
+
+.task-column {
+  min-width: 0;
+  padding: 14px;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: var(--surface-soft);
+}
+
+.task-column-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.task-column-heading h3 {
+  margin: 0;
+  color: var(--text);
+  font-size: 13px;
+}
+
+.task-column-heading > span {
+  display: grid;
+  place-items: center;
+  min-width: 26px;
+  height: 26px;
+  padding: 0 7px;
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--text);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.task-column .task-list {
+  gap: 8px;
+}
+
+.task-column .task-row {
+  align-items: flex-start;
+  margin-top: 0;
+  padding: 12px 10px;
+  border-radius: 12px;
+}
+
+.task-column .task-row:hover {
+  transform: translateY(-2px);
+}
+
+.task-column .task-info {
+  gap: 8px;
+}
+
+.task-column .task-info strong {
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.task-column .task-info .task-project-name {
+  color: var(--muted);
+  font-size: 10px;
+  overflow-wrap: anywhere;
+}
+
+.task-priority {
+  display: inline-flex;
+  width: fit-content;
+  padding: 5px 8px;
+  border-radius: 7px;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.priority-high {
+  color: #ffaaa9;
+  background: rgba(239, 68, 68, 0.14);
+}
+
+.priority-medium {
+  color: #f6cc7b;
+  background: rgba(245, 158, 11, 0.14);
+}
+
+.priority-low {
+  color: #9ee6c2;
+  background: rgba(34, 197, 94, 0.14);
+}
+
+@media (max-width: 900px) {
+  .task-board {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ORBIT My Tasks status and priority view */
+.task-status-cards {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+  margin: 18px 0 26px;
+}
+
+.task-status-card {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 8px 12px;
+  align-items: center;
+  text-align: left;
+  padding: 18px;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: var(--surface-soft);
+  color: var(--text);
+  cursor: pointer;
+  transition: transform .2s ease, border-color .2s ease;
+}
+
+.task-status-card:hover {
+  transform: translateY(-3px);
+}
+
+.task-status-card.selected {
+  border-color: #a78bfa;
+  box-shadow: 0 0 0 2px rgba(167, 139, 250, .15);
+}
+
+.task-status-icon {
+  grid-row: span 2;
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  background: rgba(167, 139, 250, .16);
+  color: #a78bfa;
+  font-size: 20px;
+}
+
+.task-status-title {
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.task-status-card strong {
+  font-size: 25px;
+}
+
+.task-status-card small {
+  grid-column: 1 / -1;
+  color: var(--muted);
+}
+
+.task-filter-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-bottom: 16px;
+}
+
+.task-filter-heading h3 {
+  margin: 0 0 5px;
+  color: var(--text);
+  font-size: 16px;
+}
+
+.task-filter-heading p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.priority-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.priority-filter {
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  background: var(--surface);
+  color: var(--text);
+  font-size: 11px;
+  cursor: pointer;
+}
+
+.priority-filter.active {
+  border-color: #a78bfa;
+  background: rgba(167, 139, 250, .16);
+}
+
+.task-demo-list {
+  display: grid;
+  gap: 10px;
+}
+
+.task-demo-card {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  width: 100%;
+  padding: 15px;
+  text-align: left;
+  border: 1px solid var(--border);
+  border-radius: 13px;
+  background: var(--surface-soft);
+  color: var(--text);
+  cursor: pointer;
+}
+
+.task-demo-card:hover {
+  border-color: #a78bfa;
+}
+
+.task-demo-info {
+  display: grid;
+  gap: 6px;
+  flex: 1;
+  min-width: 0;
+}
+
+.task-demo-info strong {
+  font-size: 13px;
+  overflow-wrap: anywhere;
+}
+
+.task-demo-info > span {
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.task-demo-status {
+  color: var(--muted);
+  font-size: 11px;
+  white-space: nowrap;
+}
+
+@media (max-width: 760px) {
+  .task-status-cards {
+    grid-template-columns: 1fr;
+  }
+
+  .task-demo-card {
+    flex-wrap: wrap;
+  }
+
+  .task-filter-heading {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}
+
+
+/* Dedicated My Tasks page */
+.my-tasks-page {
+  padding: 28px 0;
+  animation: myTasksEnter 0.25s ease;
+}
+
+.my-tasks-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 28px;
+}
+
+.my-tasks-heading h1 {
+  margin: 10px 0;
+  font-size: clamp(28px, 4vw, 38px);
+}
+
+.my-tasks-heading p,
+.my-task-chart-panel > p {
+  color: var(--muted, #8b8ba3);
+}
+
+.my-task-folder-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+}
+
+.my-task-folder-card {
+  min-height: 205px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 13px;
+  text-align: left;
+  border: 1px solid var(--border, #e7e5ef);
+  border-radius: 22px;
+  background: var(--card, #fff);
+  color: var(--text, #242238);
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.my-task-folder-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 14px 35px rgba(70, 50, 120, 0.12);
+}
+
+.my-task-folder-icon {
+  width: 45px;
+  height: 45px;
+  display: grid;
+  place-items: center;
+  border-radius: 14px;
+  font-size: 23px;
+  background: #eee8ff;
+  color: #7951d5;
+}
+
+.folder-green .my-task-folder-icon {
+  background: #dcfce7;
+  color: #16834a;
+}
+
+.folder-orange .my-task-folder-icon {
+  background: #ffedd5;
+  color: #c66a13;
+}
+
+.my-task-folder-name {
+  font-weight: 700;
+  font-size: 17px;
+}
+
+.my-task-folder-card strong {
+  font-size: 30px;
+}
+
+.my-task-folder-card small {
+  color: var(--muted, #8b8ba3);
+}
+
+.my-tasks-back {
+  margin-bottom: 18px;
+}
+
+.my-task-detail-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.7fr) minmax(260px, 0.8fr);
+  gap: 20px;
+  align-items: start;
+}
+
+.my-task-list-panel,
+.my-task-chart-panel {
+  min-width: 0;
+  padding: 22px;
+  border-radius: 20px;
+}
+
+.my-task-priority-filters {
+  margin: 18px 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.my-task-pie-chart {
+  width: 100%;
+  height: 220px;
+}
+
+.my-task-chart-legend {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 12px 0;
+}
+
+.my-task-chart-legend span {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.my-task-chart-legend i {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+@keyframes myTasksEnter {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 850px) {
+  .my-task-folder-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .my-task-detail-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 520px) {
+  .my-tasks-heading {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}
+
+.task-modal {
+  width: min(520px, 94vw);
+  max-height: 88vh;
+  overflow-y: auto;
+}
+
+.task-modal .project-form {
+  gap: 10px;
+}
+
+.task-modal .project-form input,
+.task-modal .project-form select,
+.task-modal .project-form textarea {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.task-modal .project-form textarea {
+  min-height: 90px;
+  resize: vertical;
+}
+
+.task-modal .project-form-actions {
+  margin-top: 12px;
+}
+
+@media (max-width: 600px) {
+  .task-modal {
+    width: 94vw;
+    padding: 18px;
+  }
 }
