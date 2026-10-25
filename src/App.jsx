@@ -18,6 +18,7 @@ import Login from './Login'
 import Landing from './pages/Landing'
 import Tickets from './pages/Tickets'
 import Submissions from './pages/Submissions'
+import Calendar from './pages/Calendar'
 
 import { getCurrentUser } from './services/auth'
 
@@ -967,6 +968,14 @@ function App() {
               {activePage === 'tickets' && <b>↗</b>}
             </button>
 
+            <button
+              className={`nav-item ${activePage === 'calendar' ? 'active' : ''}`}
+              onClick={() => setActivePage('calendar')}
+            >
+              <span>▦</span> Calendar
+              {activePage === 'calendar' && <b>↗</b>}
+            </button>
+
             {userRole === 'product-manager' && (
               <a
                 className="nav-item"
@@ -1072,6 +1081,8 @@ function App() {
 
           {activePage === 'submissions' ? (
             <Submissions onBack={() => setActivePage('overview')} />
+          ) : activePage === 'calendar' ? (
+            <Calendar tasks={tasks} />
           ) : activePage === 'analytics' ? (
             <AnalyticsPage
               projects={projects}
