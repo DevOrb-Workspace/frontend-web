@@ -181,3 +181,81 @@
     justify-content: flex-start;
   }
 }
+
+/* ===== ORBIT SUBMISSIONS: DARK MODE FIX ===== */
+
+.app.dark .submissions-page {
+  color: var(--text, #f3f2ff);
+}
+
+.app.dark .submissions-eyebrow {
+  color: var(--purple, #a477ff);
+}
+
+.app.dark .submissions-heading h1 span {
+  color: var(--pink, #ff9fce);
+}
+
+.app.dark .submissions-heading p,
+.app.dark .submission-info p,
+.app.dark .submission-info small,
+.app.dark .submission-stats article span,
+.app.dark .submission-empty {
+  color: var(--muted, #b0a5c6);
+}
+
+/* Stats cards and submission cards */
+.app.dark .submission-stats article,
+.app.dark .submission-card {
+  background: var(--surface, #20192d);
+  color: var(--text, #f3f2ff);
+  border-color: var(--border, #3b2d50);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+.app.dark .submission-stats article strong,
+.app.dark .submission-info h3,
+.app.dark .submission-list-heading h2 {
+  color: var(--text, #f3f2ff);
+}
+
+/* Back button and dropdowns */
+.app.dark .submissions-back,
+.app.dark .submission-list-heading select,
+.app.dark .submission-actions select {
+  background: var(--surface-soft, #292039);
+  color: var(--text, #f3f2ff);
+  border-color: var(--border, #3b2d50);
+}
+
+.app.dark .submissions-back:hover {
+  border-color: var(--purple, #a477ff);
+}
+
+/* Submission icon tile */
+.app.dark .submission-symbol {
+  background: rgba(164, 119, 255, 0.16);
+  color: var(--purple, #c49aff);
+}
+
+/* Status badges remain readable in dark mode */
+.app.dark .status-under-review {
+  background: #493b24;
+  color: #ffdc91;
+}
+
+.app.dark .status-approved {
+  background: #203d32;
+  color: #9ce8bf;
+}
+
+.app.dark .status-changes-requested {
+  background: #48283a;
+  color: #ffb6d5;
+}
+
+/* Empty-state divider */
+.app.dark .submission-empty {
+  border-color: var(--border, #3b2d50);
+}
+

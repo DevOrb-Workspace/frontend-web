@@ -16,10 +16,10 @@ export function verifyOtp(details) {
 }
 
 export function login(email, password) {
-  return apiRequest('/api/v1/auth/login', {
+  return apiRequest('/api/auth/login', {
     method: 'POST',
     body: JSON.stringify({
-      identifier: email,
+      email,
       password,
     }),
   });

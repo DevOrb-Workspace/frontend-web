@@ -1,6 +1,11 @@
 
 import { useState } from 'react'
 import { login as loginUser } from './services/auth'
+import {
+  requestPasswordReset,
+  verifyPasswordResetCode,
+  resetPassword,
+} from './services/passwordReset'
 import './Login.css'
 import { FcGoogle } from 'react-icons/fc'
 import { FaGithub } from 'react-icons/fa'
@@ -99,6 +104,15 @@ export default function Login({
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
 
+  const [recoveryStage, setRecoveryStage] = useState('login')
+  const [recoveryEmail, setRecoveryEmail] = useState('')
+  const [recoveryOtp, setRecoveryOtp] = useState('')
+  const [newPassword, setNewPassword] = useState('')
+  const [recoveryLoading, setRecoveryLoading] = useState(false)
+  const [recoveryError, setRecoveryError] = useState('')
+  const [recoveryNotice, setRecoveryNotice] = useState('')
+
+
   const [organisationMode, setOrganisationMode] = useState('')
   const [organisationName, setOrganisationName] = useState('')
   const [organisationId, setOrganisationId] = useState('')
@@ -145,13 +159,21 @@ export default function Login({
         throw new Error(data.message || 'Login failed.')
       }
 
-      const user = data?.user || data?.profile
+      const payload =
+        data?.data && typeof data.data === 'object' ? data.data : data
 
-      if (!user?.role) {
-        throw new Error(
-          'Login response received, but the user profile needs verification.'
-        )
-      }
+      const user =
+        payload?.user ||
+        payload?.profile ||
+        data?.user ||
+        data?.profile ||
+        payload
+
+      const memberships = [
+        ...(Array.isArray(payload?.memberships) ? payload.memberships : []),
+        ...(Array.isArray(user?.memberships) ? user.memberships : []),
+        ...(Array.isArray(data?.memberships) ? data.memberships : []),
+      ].filter(Boolean)
 
       const roleMap = {
         user: 'developer',
@@ -162,21 +184,122 @@ export default function Login({
         'senior-manager': 'senior-manager',
       }
 
-     const mappedRole = roleMap[String(user.role).toLowerCase()]
+      const roleCandidates = [
+        payload?.membership?.role,
+        ...memberships.map(member => member?.role),
+        user?.membership?.role,
+        user?.role,
+        payload?.role,
+        data?.membership?.role,
+        data?.role,
+      ]
+
+      const mappedRole = roleCandidates
+        .map(value => roleMap[String(value || '').trim().toLowerCase()])
+        .find(Boolean)
 
       if (!mappedRole) {
-        throw new Error('Your account has an unsupported role.')
+        throw new Error(
+          'Login worked, but no supported role was found in the response.'
+        )
+      }
+
+      const accessToken =
+        payload?.accessToken ||
+        data?.accessToken ||
+        payload?.tokens?.accessToken ||
+        data?.tokens?.accessToken
+
+      const refreshToken =
+        payload?.refreshToken ||
+        data?.refreshToken ||
+        payload?.tokens?.refreshToken ||
+        data?.tokens?.refreshToken
+
+      if (accessToken) {
+        sessionStorage.setItem('orbit-access-token', accessToken)
+      }
+
+      if (refreshToken) {
+        sessionStorage.setItem('orbit-refresh-token', refreshToken)
+      }
+
+      const membershipOrg = memberships.find(
+        member => member?.organisationId || member?.organizationId
+      )
+
+      const organisationId =
+        payload?.organisationId ||
+        payload?.organizationId ||
+        data?.organisationId ||
+        data?.organizationId ||
+        membershipOrg?.organisationId ||
+        membershipOrg?.organizationId
+
+      if (organisationId) {
+        sessionStorage.setItem('orbit-organisation-id', organisationId)
       }
 
       onLoginSuccess?.({
-        email: user.email || email.trim(),
+        email: user?.email || payload?.email || email.trim(),
         role: mappedRole,
         user,
+        accessToken,
+        refreshToken,
+        organisationId,
       })
     } catch (err) {
       setError(err.message || 'Unable to sign in. Please try again.')
     } finally {
       setLoading(false)
+    }
+  }
+
+  async function handlePasswordRecovery(event) {
+    event.preventDefault()
+    setRecoveryError('')
+    setRecoveryNotice('')
+
+    try {
+      setRecoveryLoading(true)
+
+      if (recoveryStage === 'request') {
+        if (!recoveryEmail.trim()) {
+          throw new Error('Please enter your account email.')
+        }
+
+        await requestPasswordReset(recoveryEmail)
+        setRecoveryStage('verify')
+        setRecoveryNotice('If the account exists, a reset code has been requested. Check your email.')
+      } else if (recoveryStage === 'verify') {
+        if (!/^\d{6}$/.test(recoveryOtp.trim())) {
+          throw new Error('Enter the 6-digit code.')
+        }
+
+        await verifyPasswordResetCode(recoveryEmail, recoveryOtp)
+        setRecoveryStage('new-password')
+        setRecoveryNotice('Code verified. Choose a new password.')
+      } else if (recoveryStage === 'new-password') {
+        if (newPassword.length < 8) {
+          throw new Error('Your new password must be at least 8 characters.')
+        }
+
+        await resetPassword(recoveryEmail, recoveryOtp, newPassword)
+        setRecoveryStage('login')
+        setEmail(recoveryEmail)
+        setPassword('')
+        setRecoveryOtp('')
+        setNewPassword('')
+        setRecoveryNotice('Password reset successful. You can now sign in.')
+      }
+    } catch (err) {
+      setRecoveryError(
+        err.status === 503
+          ? 'The service is temporarily unavailable. Please try again shortly.'
+          : err.message || 'Password recovery failed. Please try again.'
+      )
+    } finally {
+      setRecoveryLoading(false)
     }
   }
 
@@ -220,6 +343,7 @@ export default function Login({
       </section>
 
       <section className="orbit-form-side">
+        {recoveryStage === 'login' ? (
         <form className="orbit-login-card" onSubmit={handleLogin}>
           <div className="orbit-card-brand">
             <OrbitMark />
@@ -368,7 +492,12 @@ export default function Login({
             <button
               type="button"
               className="orbit-forgot-password"
-              onClick={() => onForgotPassword?.()}
+              onClick={() => {
+                setRecoveryEmail(email)
+                setRecoveryError('')
+                setRecoveryNotice('')
+                setRecoveryStage('request')
+              }}
             >
               Forgot password?
             </button>
@@ -385,15 +514,6 @@ export default function Login({
             {!loading && <span aria-hidden="true"> →</span>}
           </button>
 
-          {import.meta.env.DEV && (
-            <button
-              type="button"
-              className="orbit-preview-button"
-              onClick={() => onPreviewDashboard?.(role)}
-            >
-              Preview Dashboard →
-            </button>
-          )}
 
           <div className="orbit-divider">
             <span>or continue with</span>
@@ -419,10 +539,147 @@ export default function Login({
             </button>
           </div>
 
+          <section className="orbit-preview-section">
+            <p className="orbit-preview-heading">Just exploring Orbit?</p>
+            <p className="orbit-preview-description">
+              Open a demo dashboard without signing in.
+            </p>
+
+            <div className="orbit-preview-buttons">
+              <button
+                type="button"
+                onClick={() => onPreviewDashboard?.('developer')}
+              >
+                Developer
+              </button>
+              <button
+                type="button"
+                onClick={() => onPreviewDashboard?.('product-manager')}
+              >
+                Product Manager
+              </button>
+              <button
+                type="button"
+                onClick={() => onPreviewDashboard?.('senior-manager')}
+              >
+                Senior Manager
+              </button>
+            </div>
+          </section>
+
           <p className="orbit-login-footer">
             Your team workspace, all in one place.
           </p>
         </form>
+      ) : (
+        <form className="orbit-login-card" onSubmit={handlePasswordRecovery}>
+          <div className="orbit-card-brand">
+            <OrbitMark />
+            <span>orbit<span className="brand-dot">.</span></span>
+          </div>
+
+          <h2>
+            {recoveryStage === 'request'
+              ? 'Forgot password?'
+              : recoveryStage === 'verify'
+                ? 'Verify your code'
+                : 'Create a new password'}
+          </h2>
+
+          <p className="orbit-login-subtitle">
+            {recoveryStage === 'request'
+              ? 'Enter your account email to request a reset code.'
+              : recoveryStage === 'verify'
+                ? 'Enter the 6-digit code sent to your email.'
+                : 'Choose a new password with at least 8 characters.'}
+          </p>
+
+          {recoveryStage === 'request' && (
+            <>
+              <label htmlFor="recovery-email">Email address</label>
+              <div className="orbit-input-wrap">
+                <input
+                  id="recovery-email"
+                  type="email"
+                  value={recoveryEmail}
+                  onChange={event => setRecoveryEmail(event.target.value)}
+                  autoComplete="email"
+                  required
+                />
+              </div>
+            </>
+          )}
+
+          {recoveryStage === 'verify' && (
+            <>
+              <label htmlFor="recovery-otp">6-digit verification code</label>
+              <div className="orbit-input-wrap">
+                <input
+                  id="recovery-otp"
+                  inputMode="numeric"
+                  autoComplete="one-time-code"
+                  maxLength={6}
+                  value={recoveryOtp}
+                  onChange={event => setRecoveryOtp(event.target.value.replace(/\D/g, '').slice(0, 6))}
+                  required
+                />
+              </div>
+            </>
+          )}
+
+          {recoveryStage === 'new-password' && (
+            <>
+              <label htmlFor="recovery-new-password">New password</label>
+              <div className="orbit-input-wrap">
+                <input
+                  id="recovery-new-password"
+                  type="password"
+                  autoComplete="new-password"
+                  minLength={8}
+                  value={newPassword}
+                  onChange={event => setNewPassword(event.target.value)}
+                  required
+                />
+              </div>
+            </>
+          )}
+
+          {recoveryNotice && (
+            <p className="orbit-recovery-notice" role="status">
+              {recoveryNotice}
+            </p>
+          )}
+
+          {recoveryError && (
+            <p className="orbit-login-error" role="alert">
+              {recoveryError}
+            </p>
+          )}
+
+          <button className="orbit-submit" type="submit" disabled={recoveryLoading}>
+            {recoveryLoading
+              ? 'Please wait...'
+              : recoveryStage === 'request'
+                ? 'Send reset code'
+                : recoveryStage === 'verify'
+                  ? 'Verify code'
+                  : 'Reset password'}
+            {!recoveryLoading && <span aria-hidden="true"> →</span>}
+          </button>
+
+          <button
+            className="orbit-forgot-password"
+            type="button"
+            onClick={() => {
+              setRecoveryStage('login')
+              setRecoveryError('')
+              setRecoveryNotice('')
+            }}
+          >
+            ← Back to sign in
+          </button>
+        </form>
+      )}
       </section>
     </main>
   )
