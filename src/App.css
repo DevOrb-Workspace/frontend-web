@@ -3107,3 +3107,219 @@ button.nav-item.active svg {
     padding: 18px;
   }
 }
+
+/* ===== ORBIT DASHBOARD COLOR RESTORE ===== */
+
+/* Developer — Navy, Lavender, Lime */
+.app.light.role-developer {
+  --bg: #f4f5fb;
+  --surface: #ffffff;
+  --card: #ffffff;
+  --surface-soft: #e9e8f7;
+  --text: #25243b;
+  --muted: #777d98;
+  --border: #dfe2f0;
+  --sidebar: #ffffff;
+  --purple: #7954d9;
+  --green: #4b936f;
+  --pink: #d85c9b;
+  --cyan: #328f9b;
+  --lime: #b8e65c;
+}
+
+.app.dark.role-developer {
+  --bg: #101426;
+  --surface: #191e33;
+  --card: #191e33;
+  --surface-soft: #252b45;
+  --text: #f3f2ff;
+  --muted: #a3abc4;
+  --border: #303751;
+  --sidebar: #151a2d;
+  --purple: #a477ff;
+  --green: #c8f56a;
+  --pink: #ff9fce;
+  --cyan: #65e6e0;
+  --lime: #c8f56a;
+}
+
+/* Product Manager — Pink, Lavender, Mint */
+.app.light.role-product-manager {
+  --bg: #fff7fb;
+  --surface: #ffffff;
+  --card: #ffffff;
+  --surface-soft: #f9eaf5;
+  --text: #38263f;
+  --muted: #89768d;
+  --border: #f0dce9;
+  --sidebar: #fff0f7;
+  --purple: #9b6bdb;
+  --green: #4eaa8d;
+  --pink: #ed82b5;
+  --cyan: #66bfb0;
+  --lime: #bcebd9;
+}
+
+.app.dark.role-product-manager {
+  --bg: #211627;
+  --surface: #302038;
+  --card: #302038;
+  --surface-soft: #3b2944;
+  --text: #fff3fa;
+  --muted: #c6aabd;
+  --border: #51354f;
+  --sidebar: #281a30;
+  --purple: #c49aff;
+  --green: #79dfb8;
+  --pink: #ff9fce;
+  --cyan: #78d9ca;
+  --lime: #bcebd9;
+}
+
+/* Senior Manager — Burgundy, Ivory, Champagne Gold */
+.app.light.role-senior-manager {
+  --bg: #faf5ed;
+  --surface: #fffaf2;
+  --card: #fffaf2;
+  --surface-soft: #f1e4d8;
+  --text: #402331;
+  --muted: #8b747a;
+  --border: #e9d8c9;
+  --sidebar: #f1e4d8;
+  --purple: #813b58;
+  --green: #58856b;
+  --pink: #c69b65;
+  --cyan: #8d6a7a;
+  --lime: #d9bd80;
+}
+
+.app.dark.role-senior-manager {
+  --bg: #21151c;
+  --surface: #302029;
+  --card: #302029;
+  --surface-soft: #3d2933;
+  --text: #fff5e9;
+  --muted: #c8adb3;
+  --border: #593542;
+  --sidebar: #291820;
+  --purple: #d49bb4;
+  --green: #91b69a;
+  --pink: #d9bd80;
+  --cyan: #c99aaa;
+  --lime: #e8d29e;
+}
+
+/* Apply theme variables consistently to dashboard surfaces */
+.app.role-developer .dashboard-shell,
+.app.role-product-manager .dashboard-shell,
+.app.role-senior-manager .dashboard-shell,
+.app.role-developer .workspace,
+.app.role-product-manager .workspace,
+.app.role-senior-manager .workspace {
+  background-color: var(--bg);
+  color: var(--text);
+}
+
+.app.role-developer .sidebar,
+.app.role-product-manager .sidebar,
+.app.role-senior-manager .sidebar {
+  background: var(--sidebar);
+  border-color: var(--border);
+}
+
+.app.role-developer .panel,
+.app.role-product-manager .panel,
+.app.role-senior-manager .panel,
+.app.role-developer .stat-card,
+.app.role-product-manager .stat-card,
+.app.role-senior-manager .stat-card,
+.app.role-developer .project-card,
+.app.role-product-manager .project-card,
+.app.role-senior-manager .project-card,
+.app.role-developer .analytics-panel,
+.app.role-product-manager .analytics-panel,
+.app.role-senior-manager .analytics-panel,
+.app.role-developer .analytics-summary-card,
+.app.role-product-manager .analytics-summary-card,
+.app.role-senior-manager .analytics-summary-card {
+  background: var(--surface) !important;
+  color: var(--text) !important;
+  border-color: var(--border) !important;
+}
+
+.app.role-developer .nav-item.active {
+  background: #e9e0ff;
+  color: #7045c5;
+}
+
+.app.dark.role-developer .nav-item.active {
+  background: #30264a;
+  color: #c8adff;
+}
+
+.app.light.role-product-manager .nav-item.active {
+  background: #f4e5ff;
+  color: #7c3f91;
+}
+
+.app.dark.role-product-manager .nav-item.active {
+  background: #49304d;
+  color: #e5caff;
+}
+
+.app.light.role-senior-manager .nav-item.active {
+  background: #813b58;
+  color: #fffaf2;
+}
+
+.app.dark.role-senior-manager .nav-item.active {
+  background: #593044;
+  color: #ffe1b0;
+}
+
+/* Keep role-specific hero colours in both modes */
+.app.light.role-developer .hero {
+  background: linear-gradient(120deg, #e9e5ff, #dceaff 60%, #e2f8ee);
+  border-color: #d8d0f4;
+  color: #25243b;
+}
+
+.app.dark.role-developer .hero {
+  background: linear-gradient(120deg, #202744, #38235a);
+  border-color: #514071;
+  color: #f3f2ff;
+}
+
+.app.light.role-product-manager .hero {
+  background: linear-gradient(120deg, #f9d9e9, #e9e0ff 65%, #d8f5e9);
+  border-color: #edd5eb;
+  color: #38263f;
+}
+
+.app.dark.role-product-manager .hero {
+  background: linear-gradient(120deg, #49304d, #302744 65%, #214039);
+  border-color: var(--border);
+  color: var(--text);
+}
+
+.app.light.role-senior-manager .hero {
+  background: linear-gradient(120deg, #f1e4d8, #f8e7df 60%, #ead7b5);
+  border-color: #e9d8c9;
+  color: #402331;
+}
+
+.app.dark.role-senior-manager .hero {
+  background: linear-gradient(120deg, #482333, #633047 65%, #60462e);
+  border-color: var(--border);
+  color: var(--text);
+}
+
+.app.role-product-manager .hero h1,
+.app.role-product-manager .hero p,
+.app.role-product-manager .hero .eyebrow,
+.app.role-senior-manager .hero h1,
+.app.role-senior-manager .hero p,
+.app.role-senior-manager .hero .eyebrow {
+  color: inherit;
+}
+
