@@ -644,3 +644,96 @@
 .orbit-organisation-actions button:hover {
   border-color: #a78bfa;
 }
+/* Center organisation selection buttons */
+.orbit-organisation-actions {
+  justify-content: center;
+  width: 100%;
+}
+
+/* Force-centre organisation buttons inside the login card */
+.orbit-login-card .orbit-organisation-actions {
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  flex-direction: row !important;
+  flex-wrap: wrap;
+  width: 100%;
+  box-sizing: border-box;
+  margin: 0 auto 18px !important;
+  padding: 0;
+}
+
+.orbit-login-card .orbit-organisation-actions button {
+  flex: 0 0 auto;
+  width: auto;
+  margin: 0;
+}
+
+/* Final fix: centre the complete organisation button group */
+.orbit-login-card .orbit-organisation-actions {
+  display: flex !important;
+  flex-direction: row !important;
+  flex-wrap: wrap !important;
+  justify-content: center !important;
+  align-items: center !important;
+  width: fit-content !important;
+  max-width: 100% !important;
+  margin: 0 auto 18px !important;
+  align-self: center !important;
+  box-sizing: border-box !important;
+}
+
+.orbit-login-card .orbit-organisation-actions button {
+  flex: 0 1 auto !important;
+  margin: 0 !important;
+  white-space: nowrap;
+}
+
+
+/* Preview Dashboard role selector */
+.orbit-preview-section {
+  margin-top: 22px;
+  padding: 16px;
+  border: 1px solid rgba(167, 139, 250, 0.3);
+  border-radius: 16px;
+  background: rgba(167, 139, 250, 0.07);
+  text-align: center;
+}
+
+.orbit-preview-heading {
+  margin: 0;
+  color: var(--text, inherit);
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.orbit-preview-description {
+  margin: 6px 0 13px;
+  color: var(--muted, #888);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.orbit-preview-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+}
+
+.orbit-preview-buttons button {
+  padding: 9px 11px;
+  border: 1px solid rgba(167, 139, 250, 0.4);
+  border-radius: 10px;
+  background: rgba(139, 92, 246, 0.1);
+  color: inherit;
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+  transition: background 180ms ease, transform 180ms ease;
+}
+
+.orbit-preview-buttons button:hover {
+  background: rgba(139, 92, 246, 0.22);
+  transform: translateY(-1px);
+}

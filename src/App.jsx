@@ -19,8 +19,13 @@ import Landing from './pages/Landing'
 import Tickets from './pages/Tickets'
 import Submissions from './pages/Submissions'
 import Calendar from './pages/Calendar'
+import Chat from './features/chat/Chat'
 
-import { getCurrentUser } from './services/auth'
+import { getCurrentUser, logout } from './services/auth'
+import { createProjectRequest } from './services/projects'
+import { createTaskRequest, updateTaskStatusRequest } from './services/tasks'
+import { getOrganisationMembers } from './services/members'
+import { joinOrganisation, verifyOrganisationOtp } from './services/organisation'
 
 const initialProjects = [
   {
@@ -176,9 +181,23 @@ function AnalyticsPage({ projects, tasks, onBack }) {
                 <Tooltip />
                 <Bar
                   dataKey="tasks"
-                  fill="#a78bfa"
                   radius={[6, 6, 0, 0]}
-                />
+                >
+                  {activity.map((entry, index) => (
+                    <Cell
+                      key={entry.day}
+                      fill={[
+                        '#A477FF',
+                        '#FF9FCE',
+                        '#65E6E0',
+                        '#79DFB8',
+                        '#C8F56A',
+                        '#FFD166',
+                        '#FF7B72'
+                      ][index % 7]}
+                    />
+                  ))}
+                </Bar>
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -455,6 +474,7 @@ function MyTasksPage({ tasks, toggleTask, addTask, onBack }) {
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false)
+  const [showProfileMenu, setShowProfileMenu] = useState(false)
   const [userEmail, setUserEmail] = useState('')
   const [showLanding, setShowLanding] = useState(true)
   const [userRole, setUserRole] = useState('developer')
@@ -507,7 +527,7 @@ function App() {
           'senior-manager': 'senior-manager',
         }
 
-        const mappedRole = roleMap[user.role]
+      const mappedRole = roleMap[user.role] || 'developer'
 
 
         if (!user.email || !mappedRole) {
@@ -539,6 +559,7 @@ function App() {
   const [newTaskPriority, setNewTaskPriority] = useState('Medium')
   const [newTaskDeadline, setNewTaskDeadline] = useState('')
   const [newTaskProject, setNewTaskProject] = useState('')
+  const [newTaskAssignee, setNewTaskAssignee] = useState('')
   const [newTaskDescription, setNewTaskDescription] = useState('')
   const [newTaskStatus, setNewTaskStatus] = useState('To Do')
   const [dark, setDark] = useState(
@@ -555,8 +576,20 @@ function App() {
   const [inviteEmail, setInviteEmail] = useState('')
   const [inviteRole, setInviteRole] = useState('developer')
   const [invitedMembers, setInvitedMembers] = useState([])
+  const [backendMembers, setBackendMembers] = useState([])
+  const [membersLoading, setMembersLoading] = useState(false)
+  const [membersError, setMembersError] = useState('')
   const [inviteError, setInviteError] = useState('')
   const [inviteSuccess, setInviteSuccess] = useState('')
+  const [inviteStage, setInviteStage] = useState('join')
+  const [inviteOrgId, setInviteOrgId] = useState(
+    () => sessionStorage.getItem('orbit-organisation-id') || ''
+  )
+  const [inviteAccessCode, setInviteAccessCode] = useState('')
+  const [inviteUsername, setInviteUsername] = useState('')
+  const [invitePassword, setInvitePassword] = useState('')
+  const [inviteOtp, setInviteOtp] = useState('')
+  const [inviteSubmitting, setInviteSubmitting] = useState(false)
 
   const [editingProject, setEditingProject] = useState(null)
   const [projectName, setProjectName] = useState('')
@@ -607,6 +640,72 @@ function App() {
   useEffect(() => {
     localStorage.setItem('orbit-tasks', JSON.stringify(tasks))
   }, [tasks])
+
+  useEffect(() => {
+    if (!showInviteModal) return
+
+    const accessToken = sessionStorage.getItem('orbit-access-token')
+
+    if (!accessToken) {
+      setBackendMembers([])
+      setMembersLoading(false)
+      setMembersError(
+        'A backend-authenticated session is needed to load real members. Preview data remains local.'
+      )
+      return
+    }
+
+    let cancelled = false
+    setMembersLoading(true)
+    setMembersError('')
+
+    getOrganisationMembers()
+      .then(response => {
+        const records = Array.isArray(response)
+          ? response
+          : Array.isArray(response?.members)
+            ? response.members
+            : Array.isArray(response?.data)
+              ? response.data
+              : Array.isArray(response?.data?.members)
+                ? response.data.members
+                : null
+
+        if (!records) {
+          throw new Error('The members API returned an unexpected response format.')
+        }
+
+        if (!cancelled) {
+          setBackendMembers(records.map(member => {
+            const user = member?.user || member || {}
+
+            return {
+              id: member?.id || user?.id,
+              email: user?.email || member?.email || '',
+              username: user?.username || member?.username || '',
+              role: String(member?.role || user?.role || 'member')
+                .replace(/[_-]/g, ' ')
+                .toLowerCase(),
+              isEmailVerified: user?.isEmailVerified,
+            }
+          }))
+        }
+      })
+      .catch(error => {
+        if (!cancelled) {
+          setBackendMembers([])
+          setMembersError(error.message || 'Could not load organisation members.')
+        }
+      })
+      .finally(() => {
+        if (!cancelled) setMembersLoading(false)
+      })
+
+    return () => {
+      cancelled = true
+    }
+  }, [showInviteModal])
+
 
   useEffect(() => {
     localStorage.setItem('team-theme', dark ? 'dark' : 'light')
@@ -682,26 +781,55 @@ function App() {
     setShowProjectModal(true)
   }
 
-  function createProject(event) {
+  async function createProject(event) {
     event.preventDefault()
 
     if (!projectName.trim() || !teamName.trim()) return
 
-    setProjects(previous => [
-      ...previous,
-      {
-        name: projectName.trim(),
-        description: projectDescription.trim(),
-        team: teamName.trim(),
-        progress: 0,
-        color: projectColor,
-        image:
-          'https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=700&q=80'
-      }
-    ])
+    const projectDetails = {
+      name: projectName.trim(),
+      description: projectDescription.trim(),
+    }
 
-    setShowProjectModal(false)
-    setEditingProject(null)
+    const accessToken = sessionStorage.getItem('orbit-access-token')
+
+    try {
+      let createdProject
+
+      if (accessToken) {
+        const response = await createProjectRequest(projectDetails)
+        createdProject = response?.project || response?.data || response
+      } else {
+        // Preview Dashboard remains a local-only demo.
+        createdProject = {
+          ...projectDetails,
+          id: `preview-${Date.now()}`,
+          status: 'ACTIVE',
+          deadline: null,
+        }
+      }
+
+      setProjects(previous => [
+        ...previous,
+        {
+          id: createdProject.id || `local-${Date.now()}`,
+          name: createdProject.name || projectDetails.name,
+          description: createdProject.description ?? projectDetails.description,
+          team: teamName.trim(),
+          progress: 0,
+          color: projectColor,
+          status: createdProject.status || 'ACTIVE',
+          deadline: createdProject.deadline || '',
+          image:
+            'https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=700&q=80'
+        }
+      ])
+
+      setShowProjectModal(false)
+      setEditingProject(null)
+    } catch (error) {
+      window.alert(`Could not create project on the backend: ${error.message}`)
+    }
   }
 
   function editProject(project) {
@@ -761,83 +889,280 @@ function App() {
     setEditingProject(null)
   }
 
-  function addTask() {
+  async function addTask() {
     if (!newTaskTitle.trim() || !newTaskProject) return
 
-    setTasks(previous => [
-      ...previous,
-      {
-        id: Date.now(),
-        title: newTaskTitle.trim(),
-        project: newTaskProject,
-        description: newTaskDescription.trim(),
-        status: newTaskStatus,
-        priority: newTaskPriority,
-        deadline: newTaskDeadline,
-        color: 'purple'
-      }
-    ])
+    const selectedProject = projects.find(
+      project => project.name === newTaskProject
+    )
+    const accessToken = sessionStorage.getItem('orbit-access-token')
 
-    setNewTaskTitle('')
-    setNewTaskProject('')
-    setNewTaskDescription('')
-    setNewTaskStatus('To Do')
-    setNewTaskPriority('Medium')
-    setNewTaskDeadline('')
-    setShowTaskModal(false)
+    try {
+      let newTask
+
+      if (accessToken) {
+        if (
+          !selectedProject?.id ||
+          String(selectedProject.id).startsWith('local-') ||
+          String(selectedProject.id).startsWith('preview-')
+        ) {
+          throw new Error(
+            'This project is only local/preview. Select a project created on the backend.'
+          )
+        }
+
+        if (!newTaskAssignee.trim()) {
+          throw new Error('Enter the assigned developer ID.')
+        }
+
+        const response = await createTaskRequest({
+          projectId: selectedProject.id,
+          title: newTaskTitle.trim(),
+          description: newTaskDescription.trim(),
+          assignedTo: newTaskAssignee.trim(),
+          priority: newTaskPriority.toLowerCase(),
+          dueDate: newTaskDeadline,
+        })
+
+        const taskData = response?.task || response?.data || response
+
+        const statusMap = {
+          TODO: 'To Do',
+          IN_PROGRESS: 'In Progress',
+          SUBMITTED: 'Submitted',
+          COMPLETED: 'Completed',
+          CANCELLED: 'Cancelled',
+        }
+
+        newTask = {
+          id: taskData.id || taskData._id,
+          projectId: selectedProject.id,
+          title: taskData.title || newTaskTitle.trim(),
+          project: selectedProject.name,
+          description: taskData.description || newTaskDescription.trim(),
+          status: statusMap[String(taskData.status || 'TODO').toUpperCase()] || 'To Do',
+          priority: newTaskPriority,
+          deadline: taskData.dueDate || taskData.deadline || newTaskDeadline,
+          color: selectedProject.color || 'purple',
+        }
+      } else {
+        // Keep the Preview Dashboard's local-only demo working.
+        newTask = {
+          id: Date.now(),
+          title: newTaskTitle.trim(),
+          project: newTaskProject,
+          description: newTaskDescription.trim(),
+          status: newTaskStatus,
+          priority: newTaskPriority,
+          deadline: newTaskDeadline,
+          color: 'purple',
+        }
+      }
+
+      setTasks(previous => [...previous, newTask])
+      setNewTaskTitle('')
+      setNewTaskProject('')
+      setNewTaskDescription('')
+      setNewTaskStatus('To Do')
+      setNewTaskPriority('Medium')
+      setNewTaskDeadline('')
+      setNewTaskAssignee('')
+      setShowTaskModal(false)
+    } catch (error) {
+      window.alert(`Could not create task: ${error.message}`)
+    }
   }
 
-  function toggleTask(title) {
+  async function toggleTask(title) {
+    const task = tasks.find(item => item.title === title)
+    if (!task) return
+
     const nextStatus = {
       'To Do': 'In Progress',
       'In Progress': 'Completed',
-      'Completed': 'To Do'
+      'Completed': 'To Do',
     }
 
-    setTasks(previous =>
-      previous.map(task =>
-        task.title === title
-          ? {
-            ...task,
-            status: nextStatus[task.status] || 'To Do'
-          }
-          : task
+    const requestedStatus = nextStatus[task.status] || 'To Do'
+    const accessToken = sessionStorage.getItem('orbit-access-token')
+
+    try {
+      let finalStatus = requestedStatus
+
+      if (accessToken) {
+        const taskId = task.id
+        const localOnly =
+          !taskId ||
+          typeof taskId === 'number' ||
+          String(taskId).startsWith('local-') ||
+          String(taskId).startsWith('preview-')
+
+        if (localOnly) {
+          throw new Error(
+            'This is a local preview task. A backend task ID is required to update it on the server.'
+          )
+        }
+
+        const response = await updateTaskStatusRequest(
+          taskId,
+          requestedStatus
+        )
+
+        const updated = response?.task || response?.data || response
+        const statusMap = {
+          TODO: 'To Do',
+          IN_PROGRESS: 'In Progress',
+          SUBMITTED: 'Submitted',
+          COMPLETED: 'Completed',
+          CANCELLED: 'Cancelled',
+        }
+
+        finalStatus =
+          statusMap[String(updated?.status || '').toUpperCase()] ||
+          requestedStatus
+      }
+
+      setTasks(previous =>
+        previous.map(item =>
+          item.id === task.id
+            ? { ...item, status: finalStatus }
+            : item
+        )
       )
-    )
+    } catch (error) {
+      window.alert(`Could not update task status: ${error.message}`)
+    }
   }
 
+
+  async function handleSignOut() {
+    const refreshTokenValue = sessionStorage.getItem('orbit-refresh-token')
+
+    try {
+      if (refreshTokenValue) {
+        await logout(refreshTokenValue)
+      }
+    } catch (error) {
+      console.warn('Server sign-out failed; clearing local session.', error.message)
+    } finally {
+      sessionStorage.removeItem('orbit-access-token')
+      sessionStorage.removeItem('orbit-refresh-token')
+      sessionStorage.removeItem('orbit-organisation-id')
+
+      setShowProfileMenu(false)
+      setIsLoggedIn(false)
+      setUserEmail('')
+      setUserRole('developer')
+      setActivePage('overview')
+      setShowLanding(true)
+      window.history.replaceState({}, document.title, '/')
+    }
+  }
 
   function inviteTeam() {
     setInviteEmail('')
     setInviteRole('developer')
+    setInviteOrgId(sessionStorage.getItem('orbit-organisation-id') || '')
+    setInviteAccessCode('')
+    setInviteUsername('')
+    setInvitePassword('')
+    setInviteOtp('')
+    setInviteStage('join')
     setInviteError('')
     setInviteSuccess('')
     setShowInviteModal(true)
   }
 
-  function sendInvitation(event) {
+  async function sendInvitation(event) {
     event.preventDefault()
+    setInviteError('')
+    setInviteSuccess('')
 
     const email = inviteEmail.trim().toLowerCase()
 
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      setInviteError('Please enter a valid email address.')
+    if (
+      !inviteOrgId.trim() ||
+      !inviteAccessCode.trim() ||
+      !inviteUsername.trim() ||
+      !invitePassword
+    ) {
+      setInviteError('Please complete all required fields.')
       return
     }
 
-    if (invitedMembers.some(member => member.email === email)) {
-      setInviteError('This teammate has already been added.')
-      return
+    setInviteSubmitting(true)
+
+    try {
+      const response = await joinOrganisation({
+        orgId: inviteOrgId,
+        accessCode: inviteAccessCode,
+        email,
+        username: inviteUsername,
+        password: invitePassword,
+      })
+
+      if (response?.success === false) {
+        throw new Error(response.message || 'Registration request failed.')
+      }
+
+      setInviteEmail(email)
+      setInvitePassword('')
+      setInviteOtp('')
+      setInviteStage('otp')
+      setInviteSuccess(
+        response?.message ||
+        'Registration started. Check your email for the verification code.'
+      )
+    } catch (error) {
+      setInviteError(error.message || 'Could not start registration.')
+    } finally {
+      setInviteSubmitting(false)
     }
+  }
 
-    setInvitedMembers(previous => [
-      ...previous,
-      { email, role: inviteRole, status: 'Pending' }
-    ])
-
+  async function verifyInvitationOtp(event) {
+    event.preventDefault()
     setInviteError('')
-    setInviteSuccess(`Invitation prepared for ${email}.`)
-    setInviteEmail('')
+    setInviteSuccess('')
+
+    if (!/^\\d{6}$/.test(inviteOtp)) {
+      setInviteError('Enter the six-digit verification code.')
+      return
+    }
+
+    setInviteSubmitting(true)
+
+    try {
+      const response = await verifyOrganisationOtp(inviteEmail, inviteOtp)
+
+      if (response?.success === false) {
+        throw new Error(response.message || 'OTP verification failed.')
+      }
+
+      setInviteStage('success')
+      setInviteSuccess(
+        response?.message || 'Email verified successfully.'
+      )
+
+      setInvitedMembers(previous => {
+        if (previous.some(member => member.email === inviteEmail)) {
+          return previous
+        }
+
+        return [
+          ...previous,
+          {
+            email: inviteEmail,
+            role: inviteRole,
+            status: 'Verified',
+          },
+        ]
+      })
+    } catch (error) {
+      setInviteError(error.message || 'OTP verification failed.')
+    } finally {
+      setInviteSubmitting(false)
+    }
   }
 
 
@@ -1075,7 +1400,55 @@ function App() {
                 {dark ? '☀️' : '🌙'}
               </button>
 
-              <div className="avatar top-avatar">A</div>
+              {userRole === 'developer' && (
+                <button
+                  type="button"
+                  className="invite-team-button"
+                  onClick={inviteTeam}
+                >
+                  + Invite teammates
+                </button>
+              )}
+
+              <div className="profile-avatar-wrap">
+                <button
+                  type="button"
+                  className="avatar top-avatar"
+                  aria-label="Open profile menu"
+                  aria-haspopup="menu"
+                  aria-expanded={showProfileMenu}
+                  title="Profile"
+                  onClick={() => setShowProfileMenu(open => !open)}
+                >
+                  {((userEmail || 'A').trim().charAt(0) || 'A').toUpperCase()}
+                </button>
+
+                {showProfileMenu && (
+                  <div className="profile-dropdown" role="menu">
+                    <div className="profile-dropdown-details">
+                      <strong>{userEmail ? userEmail.split('@')[0] : 'Orbit user'}</strong>
+                      <span>{userEmail || 'No email available'}</span>
+                      <small>
+                        {userRole === 'product-manager'
+                          ? 'Product Manager'
+                          : userRole === 'senior-manager'
+                            ? 'Senior Manager'
+                            : 'Developer'}
+                      </small>
+                    </div>
+
+                    <button
+                      type="button"
+                      className="profile-signout-button"
+                      role="menuitem"
+                      onClick={handleSignOut}
+                    >
+                      <span aria-hidden="true">↪</span>
+                      Sign out
+                    </button>
+                  </div>
+                )}
+              </div>
             </div>
           </header>
 
@@ -1213,76 +1586,171 @@ function App() {
               <section className="stats-grid">
                 <article className="stat-card purple-card">
                   <div className="stat-top">
-                    <span>Active projects</span>
+                    <span>
+                      {userRole === 'developer'
+                        ? 'My Projects'
+                        : userRole === 'product-manager'
+                          ? 'Portfolio Projects'
+                          : 'Projects in Portfolio'}
+                    </span>
                     <span className="stat-icon">◈</span>
                   </div>
-
-                  <div className="stat-number">
-                    {projects.length}
-                  </div>
-
+                  <div className="stat-number">{projects.length}</div>
                   <div className="stat-note">
-                    Projects in your workspace
+                    {userRole === 'developer'
+                      ? 'Projects in your workspace'
+                      : userRole === 'product-manager'
+                        ? 'Projects to coordinate'
+                        : 'Total projects tracked'}
                   </div>
                 </article>
 
                 <article className="stat-card lime-card">
                   <div className="stat-top">
-                    <span>Tasks completed</span>
+                    <span>
+                      {userRole === 'developer'
+                        ? 'Tasks Completed'
+                        : userRole === 'product-manager'
+                          ? 'Delivery Progress'
+                          : 'Completed Tasks'}
+                    </span>
                     <span className="stat-icon">✓</span>
                   </div>
-
                   <div className="stat-number">
                     {completed}
                     <span className="stat-total">
                       {' '}/ {tasks.length}
                     </span>
                   </div>
-
                   <div className="mini-progress">
-                    <span
-                      style={{ width: `${completionRate}%` }}
-                    />
+                    <span style={{ width: `${completionRate}%` }} />
                   </div>
-
                   <div className="stat-note">
-                    {completionRate}% completion rate
+                    {completionRate}% overall completion
                   </div>
                 </article>
 
                 <article className="stat-card coral-card">
                   <div className="stat-top">
-                    <span>In Progress</span>
+                    <span>
+                      {userRole === 'developer'
+                        ? 'In Progress'
+                        : userRole === 'product-manager'
+                          ? 'Tasks In Progress'
+                          : 'Active Work'}
+                    </span>
                     <span className="stat-icon">↗</span>
                   </div>
-
-                  <div className="stat-number">
-                    {inProgress}
-                  </div>
-
+                  <div className="stat-number">{inProgress}</div>
                   <div className="stat-note">
-                    Tasks currently in progress
+                    {userRole === 'developer'
+                      ? 'Your ongoing tasks'
+                      : userRole === 'product-manager'
+                        ? 'Tasks currently underway'
+                        : 'Tasks currently in progress'}
                   </div>
                 </article>
 
                 <article className="stat-card coral-card" id="team">
                   <div className="stat-top">
-                    <span>Team members</span>
-                    <span className="stat-icon">♧</span>
+                    <span>
+                      {userRole === 'developer'
+                        ? 'To Do'
+                        : userRole === 'product-manager'
+                          ? 'Pending Tasks'
+                          : 'Outstanding Tasks'}
+                    </span>
+                    <span className="stat-icon">◷</span>
                   </div>
-
-                  <div className="stat-number">08</div>
-
-                  <div className="avatar-stack">
-                    <span>A</span>
-                    <span>R</span>
-                    <span>S</span>
-                    <span>M</span>
-                    <small>+4</small>
+                  <div className="stat-number">{toDo}</div>
+                  <div className="stat-note">
+                    {userRole === 'developer'
+                      ? 'Tasks waiting for you'
+                      : userRole === 'product-manager'
+                        ? 'Tasks awaiting action'
+                        : 'Tasks not yet completed'}
                   </div>
                 </article>
               </section>
 
+              {userRole === 'senior-manager' ? (
+                <div className="right-column">
+                  <section className="panel activity-panel executive-activity-panel">
+                    <div className="panel-heading">
+                      <div>
+                        <span className="eyebrow">PORTFOLIO SNAPSHOT</span>
+                        <h2>Delivery Overview</h2>
+                        <p>A quick look at the current workspace workload.</p>
+                      </div>
+                    </div>
+
+                    <div className="activity-stat">
+                      <div className="activity-circle purple-circle">◈</div>
+                      <div>
+                        <span>Projects tracked</span>
+                        <strong>{projects.length} projects</strong>
+                      </div>
+                    </div>
+
+                    <div className="activity-stat">
+                      <div className="activity-circle lime-circle">✓</div>
+                      <div>
+                        <span>Tasks completed</span>
+                        <strong>{completed} completed</strong>
+                      </div>
+                    </div>
+
+                    <div className="activity-stat">
+                      <div className="activity-circle coral-circle">◷</div>
+                      <div>
+                        <span>Tasks outstanding</span>
+                        <strong>{toDo + inProgress} remaining</strong>
+                      </div>
+                    </div>
+
+                    <a className="activity-link" href="#executive-insights">
+                      View portfolio insights ↗
+                    </a>
+                  </section>
+
+                  <section className="panel activity-panel executive-health-panel">
+                    <div className="panel-heading">
+                      <div>
+                        <span className="eyebrow">DELIVERY STATUS</span>
+                        <h2>Completion Rate</h2>
+                        <p>Based on tasks currently in the workspace.</p>
+                      </div>
+                    </div>
+
+                    <div className="activity-stat">
+                      <div className="activity-circle purple-circle">↗</div>
+                      <div>
+                        <span>Overall completion</span>
+                        <strong>{completionRate}%</strong>
+                      </div>
+                    </div>
+
+                    <div
+                      className="mini-progress"
+                      role="progressbar"
+                      aria-valuenow={completionRate}
+                      aria-valuemin={0}
+                      aria-valuemax={100}
+                      aria-label="Overall task completion"
+                    >
+                      <span style={{ width: `${completionRate}%` }} />
+                    </div>
+
+                    <p className="empty-state">
+                      {tasks.length === 0
+                        ? 'Add project tasks to start tracking delivery progress.'
+                        : completionRate === 100
+                          ? 'All currently tracked tasks are complete.'
+                          : 'Progress updates as tasks change status.'}
+                    </p>
+                  </section>
+                </div>
+              ) : (
               <div className="right-column">
                   <section className="panel chat-panel" id="chat">
                     <div className="panel-heading">
@@ -1368,6 +1836,8 @@ function App() {
                     </form>
                   </section>
 
+                  <Chat />
+
                   <section className="panel activity-panel" id="activity">
                     <div className="panel-heading">
                       <div>
@@ -1421,6 +1891,63 @@ function App() {
                   </section>
               </div>
 
+              )}
+
+              {userRole === 'senior-manager' ? (
+                <section className="panel tasks-panel executive-insights-panel" id="executive-insights">
+                  <div className="panel-heading">
+                    <div>
+                      <span className="eyebrow">EXECUTIVE OVERVIEW</span>
+                      <h2>Portfolio Insights</h2>
+                      <p>A quick view of delivery, workload and project progress.</p>
+                    </div>
+                  </div>
+
+                  <div className="task-status-cards">
+                    <article className="task-status-card">
+                      <span className="task-status-icon">◈</span>
+                      <span className="task-status-title">Projects tracked</span>
+                      <strong>{projects.length}</strong>
+                      <small>Across your portfolio</small>
+                    </article>
+
+                    <article className="task-status-card">
+                      <span className="task-status-icon">✓</span>
+                      <span className="task-status-title">Delivery progress</span>
+                      <strong>{completionRate}%</strong>
+                      <small>{completed} of {tasks.length} tasks completed</small>
+                    </article>
+
+                    <article className="task-status-card">
+                      <span className="task-status-icon">↗</span>
+                      <span className="task-status-title">Active workload</span>
+                      <strong>{inProgress}</strong>
+                      <small>Tasks in progress</small>
+                    </article>
+                  </div>
+
+                  <div className="task-filter-heading">
+                    <div>
+                      <h3>Workload Breakdown</h3>
+                      <p>Current task distribution across the workspace.</p>
+                    </div>
+                  </div>
+
+                  <div className="mini-progress" role="progressbar" aria-valuenow={completionRate} aria-valuemin={0} aria-valuemax={100} aria-label="Overall task completion">
+                    <span style={{ width: `${completionRate}%` }} />
+                  </div>
+
+                  <div className="task-summary">
+                    <span>Pending: <strong>{toDo}</strong></span>
+                    <span>In Progress: <strong>{inProgress}</strong></span>
+                    <span>Completed: <strong>{completed}</strong></span>
+                  </div>
+
+                  <p className="empty-state">
+                    Portfolio insights are based on the projects and tasks currently available in this workspace.
+                  </p>
+                </section>
+              ) : (
               <section className="panel tasks-panel" id="tasks">
                 <div className="panel-heading">
                   <div>
@@ -1534,6 +2061,8 @@ function App() {
                   <span>Completed: <strong>{completed}</strong></span>
                 </div>
               </section>
+              )}
+
 
               <footer className="footer">
                 <span>
@@ -1595,6 +2124,15 @@ function App() {
             </option>
           ))}
         </select>
+
+        <label htmlFor="task-assignee">Assigned Developer ID</label>
+        <input
+          id="task-assignee"
+          type="text"
+          placeholder="Enter the developer's backend ID"
+          value={newTaskAssignee}
+          onChange={event => setNewTaskAssignee(event.target.value)}
+        />
 
         <label htmlFor="task-description">Description</label>
         <textarea
@@ -1819,52 +2357,179 @@ function App() {
                 </button>
               </div>
 
-              <form className="project-form" onSubmit={sendInvitation}>
-                <label htmlFor="invite-email">Teammate's email *</label>
+              {inviteStage === 'join' ? (
+                <form className="project-form" onSubmit={sendInvitation}>
+                  <label htmlFor="invite-org-id">Organisation ID *</label>
+                  <input
+                    id="invite-org-id"
+                    value={inviteOrgId}
+                    onChange={event => setInviteOrgId(event.target.value)}
+                    placeholder="e.g. ORB-BEC85A"
+                    required
+                  />
 
-                <input
-                  id="invite-email"
-                  type="email"
-                  placeholder="teammate@example.com"
-                  value={inviteEmail}
-                  onChange={event => setInviteEmail(event.target.value)}
-                  required
-                />
+                  <label htmlFor="invite-access-code">Role access code *</label>
+                  <input
+                    id="invite-access-code"
+                    type="password"
+                    value={inviteAccessCode}
+                    onChange={event => setInviteAccessCode(event.target.value)}
+                    placeholder="Enter the code for this role"
+                    autoComplete="off"
+                    required
+                  />
 
-                <label htmlFor="invite-role">Choose their role</label>
+                  <label htmlFor="invite-username">Username *</label>
+                  <input
+                    id="invite-username"
+                    value={inviteUsername}
+                    onChange={event => setInviteUsername(event.target.value)}
+                    placeholder="Choose a username"
+                    minLength={3}
+                    maxLength={40}
+                    required
+                  />
 
-                <select
-                  id="invite-role"
-                  value={inviteRole}
-                  onChange={event => setInviteRole(event.target.value)}
-                >
-                  <option value="developer">Developer</option>
-                  <option value="product-manager">Product Manager</option>
-                  <option value="senior-manager">Senior Manager</option>
-                </select>
+                  <label htmlFor="invite-email">Teammate's email *</label>
+                  <input
+                    id="invite-email"
+                    type="email"
+                    value={inviteEmail}
+                    onChange={event => setInviteEmail(event.target.value)}
+                    placeholder="teammate@example.com"
+                    required
+                  />
 
-                {inviteError && (
-                  <p className="invite-error">{inviteError}</p>
-                )}
-
-                {inviteSuccess && (
-                  <p className="invite-success">{inviteSuccess}</p>
-                )}
-
-                <div className="project-form-actions">
-                  <button
-                    type="button"
-                    className="cancel-project-btn"
-                    onClick={() => setShowInviteModal(false)}
+                  <label htmlFor="invite-role">Choose their role</label>
+                  <select
+                    id="invite-role"
+                    value={inviteRole}
+                    onChange={event => setInviteRole(event.target.value)}
                   >
-                    Close
-                  </button>
+                    <option value="developer">Developer</option>
+                    <option value="product-manager">Product Manager</option>
+                    <option value="senior-manager">Senior Manager</option>
+                  </select>
 
-                  <button type="submit" className="create-project-btn">
-                    + Add teammate
-                  </button>
+                  <p className="invite-hint">
+                    Use the access code assigned to the selected role.
+                  </p>
+
+                  <label htmlFor="invite-password">Password *</label>
+                  <input
+                    id="invite-password"
+                    type="password"
+                    value={invitePassword}
+                    onChange={event => setInvitePassword(event.target.value)}
+                    placeholder="At least 12 characters"
+                    minLength={12}
+                    maxLength={128}
+                    autoComplete="new-password"
+                    required
+                  />
+
+                  {inviteError && <p className="invite-error" role="alert">{inviteError}</p>}
+                  {inviteSuccess && <p className="invite-success" role="status">{inviteSuccess}</p>}
+
+                  <div className="project-form-actions">
+                    <button
+                      type="button"
+                      className="cancel-project-btn"
+                      onClick={() => setShowInviteModal(false)}
+                    >
+                      Close
+                    </button>
+                    <button type="submit" className="create-project-btn" disabled={inviteSubmitting}>
+                      {inviteSubmitting ? 'Sending code...' : 'Continue to verification'}
+                    </button>
+                  </div>
+                </form>
+              ) : inviteStage === 'otp' ? (
+                <form className="project-form" onSubmit={verifyInvitationOtp}>
+                  <h3>Verify your email ✉</h3>
+                  <p>Enter the six-digit code sent to <strong>{inviteEmail}</strong>.</p>
+
+                  <label htmlFor="invite-otp">Verification code *</label>
+                  <input
+                    id="invite-otp"
+                    type="text"
+                    inputMode="numeric"
+                    autoComplete="one-time-code"
+                    value={inviteOtp}
+                    onChange={event => setInviteOtp(event.target.value.replace(/\\D/g, '').slice(0, 6))}
+                    placeholder="000000"
+                    minLength={6}
+                    maxLength={6}
+                    pattern="[0-9]{6}"
+                    required
+                  />
+
+                  {inviteError && <p className="invite-error" role="alert">{inviteError}</p>}
+                  {inviteSuccess && <p className="invite-success" role="status">{inviteSuccess}</p>}
+
+                  <div className="project-form-actions">
+                    <button
+                      type="button"
+                      className="cancel-project-btn"
+                      disabled={inviteSubmitting}
+                      onClick={() => {
+                        setInviteStage('join')
+                        setInviteError('')
+                        setInviteSuccess('')
+                      }}
+                    >
+                      Back
+                    </button>
+                    <button type="submit" className="create-project-btn" disabled={inviteSubmitting}>
+                      {inviteSubmitting ? 'Verifying...' : 'Verify OTP'}
+                    </button>
+                  </div>
+                </form>
+              ) : (
+                <div className="project-form" role="status">
+                  <h3>You're all set ✨</h3>
+                  <p>{inviteSuccess}</p>
+                  <div className="project-form-actions">
+                    <button
+                      type="button"
+                      className="cancel-project-btn"
+                      onClick={() => setShowInviteModal(false)}
+                    >
+                      Done
+                    </button>
+                  </div>
                 </div>
-              </form>
+              )}
+
+              <div className="invited-members">
+                <h3>Current organisation members</h3>
+
+                {membersLoading && <p>Loading members...</p>}
+
+                {membersError && (
+                  <p className="invite-error" role="alert">
+                    {membersError}
+                  </p>
+                )}
+
+                {!membersLoading && !membersError && backendMembers.length === 0 && (
+                  <p>No members returned by the API.</p>
+                )}
+
+                {backendMembers.map((member, index) => (
+                  <div
+                    className="invited-member"
+                    key={member.id || member.email || member.username || `member-${index}`}
+                  >
+                    <div>
+                      <strong>{member.username || member.email || 'Member'}</strong>
+                      <span>{member.email}</span>
+                    </div>
+
+                    <span>{member.role}</span>
+                  </div>
+                ))}
+              </div>
 
               {invitedMembers.length > 0 && (
                 <div className="invited-members">
